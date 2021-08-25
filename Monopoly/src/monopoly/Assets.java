@@ -31,7 +31,13 @@ public class Assets {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setLevel() {
+        this.level=+1;
     }
+
+    @Override
+    public String toString() {
+        return "Assets{" + "location=" + location + ", level=" + level + '}';
+    }
+    
 }

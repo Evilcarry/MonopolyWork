@@ -74,4 +74,10 @@ public class Player implements PlayerInterface{
     public void setJailState(boolean jailState) {
         this.jailState = jailState;
     }  
+
+    @Override
+    public String toString() {
+        return "Player{" + "money=" + money + ", name=" + name + ", currentLocation=" + currentLocation + ", jailCounter=" + jailCounter + ", jailState=" + jailState + ", asset=" + asset + '}';
+    }
+    
 }
