@@ -23,6 +23,6 @@ public class gotoJail extends GlobalLocation implements JailInterface{
     @Override
     public void removeFromJail() {
         //TODO this.setLocationID(jail location ID)
-    }
+    }   
     
 }
