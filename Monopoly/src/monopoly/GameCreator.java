@@ -9,7 +9,7 @@ package monopoly;
  *
  * @author benjh
  */
-public class MainApplication {
+public class GameCreator {
 
     private GlobalLocation[] locations = new GlobalLocation[24];
     private Player[] players = new Player[4];
