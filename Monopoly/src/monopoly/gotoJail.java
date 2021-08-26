@@ -9,9 +9,9 @@ package monopoly;
  *
  * @author benjh
  */
-public class gotoJail extends GlobalLocation implements JailInterface{
+public class GotoJail extends GlobalLocation implements JailInterface{
     
-    public gotoJail(String name, int locationID) {
+    public GotoJail(String name, int locationID) {
         super(name, locationID);
     }
 
@@ -23,6 +23,6 @@ public class gotoJail extends GlobalLocation implements JailInterface{
     @Override
     public void removeFromJail() {
         //TODO this.setLocationID(jail location ID)
-    }
+    }   
     
 }

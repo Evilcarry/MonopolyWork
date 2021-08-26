@@ -29,4 +29,10 @@ public class GlobalLocation {
     public void setLocationID(int locationID) {
         this.locationID = locationID;
     }
+
+    @Override
+    public String toString() {
+        return "GlobalLocation{" + "name=" + name + ", locationID=" + locationID + '}';
+    }
+    
 }
