@@ -33,10 +33,10 @@ public class GameCreator {
             if (i == 6 || i == 12) {
                 this.locations[i] = new GotoJail("Go to jail", i);
             }
-            if (i % 3 == 0) {
+            else if (i % 3 == 0) {
                 locations[i] = new ChanceLocation("Chance", i, i, "this is a chance card");
             }
-            if (i == 0) {
+            else if (i == 0) {
                 this.locations[i] = new GoLocation("Go", i);
             } else {
                 this.locations[i] = new HousingLocation("house: " + i, i, 20, 0, 10, 15);
