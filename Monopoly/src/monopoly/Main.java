@@ -20,9 +20,9 @@ public class Main {
         newGame.createPlayers();
         newGame.createAssets();
         int userInput;
-        boolean stop = true;
+        boolean stop = false;
         Scanner scan = new Scanner(System.in);
-        while (stop)
+        while (!stop)
         {
             System.out.println("Welcome to monopoly");
             System.out.println("Press 1 to start 2 to end");
@@ -30,9 +30,9 @@ public class Main {
             
             if (userInput == 2)
             {
-                stop = false;
+                stop = true;
             }
-            else{
+            else if (userInput != 2){
                 System.out.println("This is a list of all the players");
                 for (int i = 0; i < 4; i++)
                 {

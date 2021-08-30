@@ -70,7 +70,7 @@ public class GameCreator {
 
     @Override
     public String toString() {
-        return "MainApplication{" + "locations=" + locations + ", players=" + players + ", assets=" + assets + '}';
+        return "List of locations: " + locations + ". List of players: " + players + ". List of assets: " + assets;
     }
 
 }

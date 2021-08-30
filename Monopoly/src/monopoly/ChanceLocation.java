@@ -36,12 +36,8 @@ public class ChanceLocation extends GlobalLocation implements ActionInterface{
     }
 
     @Override
-    public void returnThreeSpaces() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void winMoney(int money) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void chanceRoll()
+    {
+        //TODO: do something.
     }
 }
