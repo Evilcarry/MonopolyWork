@@ -114,6 +114,6 @@ public class Player implements PlayerInterface{
     
     @Override
     public String toString() {
-        return "money: " + money + ", name: " + name + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset;
+        return "Name: " + name +  ", money: "+ money + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset;
     }
 }

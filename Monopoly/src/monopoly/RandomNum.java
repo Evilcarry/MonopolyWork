@@ -13,18 +13,19 @@ import java.util.Random;
 
 public class RandomNum {
 
-    int first;
+    private final int maxDiceNumber;
 
-    RandomNum() 
-    {
-        first = 1;
+    public RandomNum() {
+        this.maxDiceNumber = 6;
     }
 
-    public void randomNum() 
-    {
-        Random rand = new Random();
+    public int getFirst() {
+        return maxDiceNumber;
+    }
 
-        this.first = rand.nextInt(6);
+    public int randomNumGenerator() {
+        Random rand = new Random();
+        return rand.nextInt(this.maxDiceNumber) + 1;
     }
 
 }
