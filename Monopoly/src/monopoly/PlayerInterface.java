@@ -9,7 +9,9 @@ package monopoly;
  *
  * @author benjh
  */
-public interface JailInterface {
-    public void sendToJail(Player player); //Sends player to jail 
-    public void removeFromJail(Player player, GlobalLocation locations[]); //remove player from jail
+public interface PlayerInterface {
+    public void movePlayer(GlobalLocation location);
+    public void payPlayer(int money);
+    public void chargePlayer(int money);
+    public void purchaseAsset(Assets asset);
 }

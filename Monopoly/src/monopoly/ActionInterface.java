@@ -10,6 +10,5 @@ package monopoly;
  * @author benjh
  */
 public interface ActionInterface {
-    public void returnThreeSpaces(); //moves player 3 spaces back
-    public void winMoney(int money); //gives x amount of money to the player
+    public void chanceRoll(); //chances
 }
