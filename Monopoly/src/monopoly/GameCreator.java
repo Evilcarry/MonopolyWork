@@ -29,16 +29,17 @@ public class GameCreator {
 
     public void createLocations() {
         for (int i = 0; i < 24; i++) {
-
-            if (i == 6 || i == 12) {
+            
+            if (i == 0) {
+                this.locations[i] = new GoLocation("Go", i);
+            }
+                else if (i == 6 || i == 12) {
                 this.locations[i] = new GotoJail("Go to jail", i);
             }
             else if (i % 3 == 0) {
                 locations[i] = new ChanceLocation("Chance", i, i, "this is a chance card");
-            }
-            else if (i == 0) {
-                this.locations[i] = new GoLocation("Go", i);
-            } else {
+            } else 
+            {
                 this.locations[i] = new HousingLocation("house: " + i, i, 20, 0, 10, 15);
             }
         }

@@ -32,28 +32,21 @@ public class Main {
             {
                 stop = true;
             }
-            else if (userInput != 2){
+            else
+            {
                 System.out.println("This is a list of all the players");
                 for (int i = 0; i < 4; i++)
                 {
                 System.out.println(newGame.getPlayers()[i]);
                 }
             }
+            
             System.out.println("player 0 rolls the dice and it lands on 3, player 0 will move to location 3");
-            newGame.getPlayers()[0].setCurrentLocation(newGame.getLocations()[3]);
+            //newGame.getPlayers()[0].setCurrentLocation(newGame.getLocations()[3]);
+            newGame.getPlayers()[0].movePlayer(newGame.getLocations()[3]);
             System.out.println(newGame.getPlayers()[0]);
         }
         
-        //THIS CLASS IS USED FOR TESTING AT THE MOMENT.
-        /*
-        for (int i = 0; i < 24; i++) {
-            System.out.println(newGame.getLocations()[i]);
-            if (i < 4) {
-                System.out.println(newGame.getPlayers()[i]);
-            }
-            System.out.println(newGame.getAssets()[i]);
-        }
-        */
         System.out.println(newGame.getPlayers()[3].getName()+" has "+newGame.getPlayers()[3].getJailCounter()+" assets");
     }
 }
