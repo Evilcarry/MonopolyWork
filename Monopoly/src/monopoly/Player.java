@@ -15,7 +15,7 @@ public class Player implements PlayerInterface{
     private GlobalLocation currentLocation;
     private int jailCounter;
     private boolean jailState;
-    private Assets asset;
+    private Assets[] asset = new Assets[24];
 
     public Player(String name,GlobalLocation currentLocation)
     {
@@ -27,12 +27,12 @@ public class Player implements PlayerInterface{
         this.asset = null;
     }
     
-    public Assets getAsset() {
+    public Assets[] getAsset() {
         return asset;
     }
 
     public void setAsset(Assets asset) {
-        this.asset = asset;
+        this.asset[this.currentLocation.getLocationID()] = asset;
     }
     
     public int getMoney() {
@@ -75,9 +75,45 @@ public class Player implements PlayerInterface{
         this.jailState = jailState;
     }  
 
+     /**
+     * This method moves a player to a different location, based on the dice roll or if they are sent to jail.
+     * @param location
+     */
     @Override
-    public String toString() {
-        return "Player{" + "money=" + money + ", name=" + name + ", currentLocation=" + currentLocation + ", jailCounter=" + jailCounter + ", jailState=" + jailState + ", asset=" + asset + '}';
+    public void movePlayer(GlobalLocation location) {
+        this.currentLocation = location;
+    }
+
+    /**
+     * This method pays the player a certain amount of money, based on a chance card or go location.
+     * @param money
+     */
+    @Override
+    public void payPlayer(int money) {
+        this.money+= money;
     }
     
+    /**
+     * This method charges the player a certain amount of money, based on a chance card or if they purchased an asset..
+     * @param money
+     */
+    @Override
+    public void chargePlayer(int money)
+    {
+        this.money-= money;
+    }
+    
+    /**
+     * This method is used when the player purchases a new asset.
+     * @param asset
+     */
+    @Override
+    public void purchaseAsset(Assets asset) {
+        this.asset[this.currentLocation.getLocationID()] = asset;
+    }
+    
+    @Override
+    public String toString() {
+        return "money: " + money + ", name: " + name + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset;
+    }
 }

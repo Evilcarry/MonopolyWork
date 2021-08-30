@@ -10,5 +10,8 @@ package monopoly;
  * @author benjh
  */
 public interface PlayerInterface {
-    //Here goes all the player methods.
+    public void movePlayer(GlobalLocation location);
+    public void payPlayer(int money);
+    public void chargePlayer(int money);
+    public void purchaseAsset(Assets asset);
 }
