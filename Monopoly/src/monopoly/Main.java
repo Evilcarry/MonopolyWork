@@ -40,11 +40,12 @@ public class Main {
                 System.out.println(newGame.getPlayers()[i]);
                 }
             }
-            
+            /*
             System.out.println("player 0 rolls the dice and it lands on 3, player 0 will move to location 3");
             //newGame.getPlayers()[0].setCurrentLocation(newGame.getLocations()[3]);
             newGame.getPlayers()[0].movePlayer(newGame.getLocations()[3]);
             System.out.println(newGame.getPlayers()[0]);
+            */
         }
         
         System.out.println(newGame.getPlayers()[3].getName()+" has "+newGame.getPlayers()[3].getJailCounter()+" assets");
