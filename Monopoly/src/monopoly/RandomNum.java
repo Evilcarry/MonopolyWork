@@ -9,6 +9,22 @@ package monopoly;
  *
  * @author Sean Simpkins
  */
+import java.util.Random;
+
 public class RandomNum {
-    
+
+    int first;
+
+    RandomNum() 
+    {
+        first = 1;
+    }
+
+    public void randomNum() 
+    {
+        Random rand = new Random();
+
+        this.first = rand.nextInt(6);
+    }
+
 }
