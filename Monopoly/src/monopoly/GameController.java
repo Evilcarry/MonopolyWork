@@ -141,12 +141,15 @@ public class GameController {
             System.out.println("The price of " + game.getPlayers()[player].getCurrentLocation() + " is " + game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice());
             System.out.println("You currently have " + game.getPlayers()[player].getMoney());
             System.out.println("Would you like to purchase it? press 1 to buy, press anything else to exit the buy menu");
-            if (scan.nextInt() == 1) {
-                if (game.getPlayers()[player].getMoney() >= game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice()) {
-                    game.getPlayers()[player].purchaseAsset(game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
-                    System.out.println("You have successfully purchased this asset");
-                } else {
-                    System.out.println("Sorry you do not have sufficient funds to purchase this properly");
+            if (scan.hasNextInt()) {
+                int userAnswer = scan.nextInt();
+                if (userAnswer == 1) {
+                    if (game.getPlayers()[player].getMoney() >= game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice()) {
+                        game.getPlayers()[player].purchaseAsset(game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
+                        System.out.println("You have successfully purchased this asset");
+                    } else {
+                        System.out.println("Sorry you do not have sufficient funds to purchase this properly");
+                    }
                 }
             } else {
                 System.out.println("Thank you for accessing the buy menu!");
@@ -155,34 +158,54 @@ public class GameController {
         }
     }
 
+    /**
+     * This method displays a sell menu for the players.
+     * It checks to see if the player has any assets
+     * The location of the assets
+     * And it asks the user to see if they will like to sell it or not.
+     * @param game GameCreator object
+     * @param player the number of the player.
+     */
     public void sellMenu(GameCreator game, int player) {
         System.out.println("---------------------------------------------------------------------------------------------");
         System.out.println("Welcome to the sell menu");
         System.out.println("Here you can sell your assets!");
         System.out.println("Here is a list of all the assets you currently own");
 
+        boolean trueTillRightInput = false;
         for (int i = 0; i < 24; i++) {
             if (game.getPlayers()[player].getAsset()[i] != null) {
                 System.out.println(game.getPlayers()[player].getAsset()[i]);
+                trueTillRightInput = true;
             }
         }
-        System.out.println("Would you like to sell any assets? if so please input the id of the asset you would like to sell");
-        Scanner sellScan = new Scanner(System.in);
-        int locationOfSell = sellScan.nextInt();
-        boolean trueTillRightInput = true;
-
+        if (!trueTillRightInput) {
+            System.out.println("It appears you do not own any assets at the moment. Access the sell menu when you own something!");
+            System.out.println("---------------------------------------------------------------------------------------------");
+        }
         while (trueTillRightInput) {
-            if (null == game.getPlayers()[player].getAsset()[locationOfSell]) {
-                sellScan.next();
-                System.out.println("youve entered the wrong location, please try again");
-                locationOfSell = sellScan.nextInt();
+            System.out.println("Would you like to sell any assets? if so please input the location ID of the asset you would like to sell");
+            System.out.println("if you do not want to sell any of your assets please input the number 0");
+            Scanner sellScan = new Scanner(System.in);
+            if (sellScan.hasNextInt()) {
+                int locationOfSell = sellScan.nextInt();
+
+                if (game.getPlayers()[player].getAsset()[locationOfSell] != null) {
+                    System.out.println("congratulations you've sold your asset");
+                    System.out.println("---------------------------------------------------------------------------------------------");
+                    game.getPlayers()[player].sellAsset(game.getPlayers()[player].getAsset()[locationOfSell]);
+                    trueTillRightInput = false;
+                } else if (locationOfSell == 0) {
+                    System.out.println("Thank you for accessing the sell menu!");
+                    System.out.println("---------------------------------------------------------------------------------------------");
+                    trueTillRightInput = false;
+                } else {
+                    System.out.println("youve entered the wrong location, please try again");
+                }
             } else {
-                System.out.println("congratulations you've sold your asset");
-                game.getPlayers()[player].sellAsset(game.getPlayers()[player].getAsset()[locationOfSell]);
-                trueTillRightInput = false;
+                System.out.println("It appears that you've entered the wrong input, please try again");
             }
         }
-
     }
 
     /**
@@ -193,6 +216,7 @@ public class GameController {
         System.out.println("The rules are simple, the player with the most assets by round 15 wins, or if you all agree to end the game earlier, the player with the most money wins.");
         System.out.println("Each player has to move across the 24 different locations");
         System.out.println("Each player gets given $20000 at the start of the game, a player can get more money by landing on a chance card, by owning a property and other players paying rent and also whenever they complete a round and go through the starting location 'GO'");
+        System.out.println("A player can also sell an asset, only allowed to sell one asset per turn");
         System.out.println("Each player can purchase the location they landed on but they must have the necessary funds to purchase it, be careful! if you run out of money you instantly lose the game");
         System.out.println("If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison");
         System.out.println("Chance cards can be good and dangerous so be careful.");

@@ -110,12 +110,14 @@ public class Player implements PlayerInterface{
     @Override
     public void purchaseAsset(Assets asset) {
         this.asset[this.currentLocation.getLocationID()] = asset;
+        this.setMoney(money - this.currentLocation.cloneObject().getPrice());
     }
     
     @Override
     public void sellAsset(Assets asset)
     {
         this.asset[asset.getBoardPosition().getLocationID()] = null;
+        this.setMoney(money + this.currentLocation.cloneObject().getSellPrice());
     }
     
     @Override
