@@ -11,9 +11,16 @@ package monopoly;
  */
 public class GameCreator {
 
-    private GlobalLocation[] locations = new GlobalLocation[24];
-    private Player[] players = new Player[4];
-    private Assets[] assets = new Assets[24];
+    private GlobalLocation[] locations;
+    private Player[] players;
+    private Assets[] assets;
+    
+    public GameCreator(int numberOfPlayers)
+    {
+        this.locations = new GlobalLocation[24];
+        this.players = new Player[numberOfPlayers];
+        this.assets = new Assets[24];
+    }
 
     public void createAssets() {
         for (int i = 0; i < 24; i++) {
@@ -21,9 +28,14 @@ public class GameCreator {
         }
     }
 
-    public void createPlayers() {
-        for (int i = 0; i < 4; i++) {
-            this.players[i] = new Player("player " + i, locations[0]);
+    /**
+     * This method creates the players.
+     * @param numberOfPlayers which dictates the number of players.
+     * @param playerName[] which has the names of the players.
+    */
+    public void createPlayers(int numberOfPlayers, String playerName[]) {
+        for (int i = 0; i < numberOfPlayers; i++) {
+            this.players[i] = new Player(playerName[i], locations[0]);
         }
     }
 

@@ -15,45 +15,84 @@ public class GameController {
 
     private GameCreator newGame;
 
-    public GameController() {
-        this.newGame = new GameCreator();
-    }
-    
-    public void gameStart()
-    {
-        newGame.createLocations();
-        newGame.createPlayers();
-        newGame.createAssets();
-        
-        this.instructions();
-        
+    public void gameStart() {
+        this.instructions();//to display instructions on the game
+
+        int playerNumber = this.setPlayerNumber(); // sets the number of players
+
+        this.newGame = new GameCreator(playerNumber); //gamecreator instance that pases the number of players
+        newGame.createLocations(); //creates all the locations, possibly going to read them off a file
+        newGame.createPlayers(playerNumber, this.setPlayerName(playerNumber)); //creates the names of each player
+        newGame.createAssets(); //creates all the assets for each location.
+
         int userInput;
         boolean stop = false;
         Scanner scan = new Scanner(System.in);
-        while (!stop)
-        {
-            
+        while (!stop) {
+
             System.out.println("Welcome to monopoly");
             System.out.println("Press 1 to start 2 to end");
             userInput = scan.nextInt();
-            
-            if (userInput == 2)
-            {
+
+            if (userInput == 2) {
                 stop = true;
-            }
-            else
-            {
+            } else {
                 System.out.println("This is a list of all the players");
-                for (int i = 0; i < 4; i++)
-                {
-                System.out.println(newGame.getPlayers()[i]);
+                for (int i = 0; i < playerNumber; i++) {
+                    System.out.println(newGame.getPlayers()[i]);
                 }
-            } 
+            }
         }
     }
-    
-    public void instructions()
-    {
+
+    /**
+     * This method checks to see how many players will play the game. Between 2
+     * and 4 only, it also checks to see if the user correctly input a number
+     * between 2 and 4.
+     *
+     * @return the number of players, between 2 and 4.
+     */
+    public int setPlayerNumber() {
+        Scanner playerNumScan = new Scanner(System.in);
+        int numberOfPlayers = 2; // initiated to the default number.
+
+        System.out.println("Please select how many players you want in the game, minimum 2 and maximum 4");
+
+        boolean trueTillRightInput = true;
+
+        while (trueTillRightInput) {
+            if (playerNumScan.hasNextInt()) {
+                numberOfPlayers = playerNumScan.nextInt();
+                if (numberOfPlayers < 2 || numberOfPlayers > 4) {
+                    System.out.println("You've entered a number lower than 2 and greater than 4! Please input the correct number of players (between 2 and 4)");
+                } else {
+                    trueTillRightInput = false;
+                }
+            } else {
+                System.out.println("You've entered the wrong input please try again. The input must be an integer between 2 and 4");
+                playerNumScan.next();
+            }
+        }
+        return numberOfPlayers;
+    }
+
+    public String[] setPlayerName(int numberOfPlayers) {
+        Scanner playerNameScan = new Scanner(System.in);
+        String[] names = new String[numberOfPlayers];
+
+        for (int i = 0; i < names.length; i++) {
+            boolean trueTillRightInput = true;
+            System.out.println("Please input the name of the player number " + (i + 1));
+            names[i] = playerNameScan.nextLine();
+            System.out.println("You have entered " + names[i] + " as your name");
+        }
+        return names;
+    }
+
+    /**
+     * This method displays the instructions to the monopoly game.
+     */
+    public void instructions() {
         System.out.println("Welcome to Monopoly!");
         System.out.println("The rules are simple, the player with the most assets by round 15 wins, or if you all agree to end the game earlier, the player with the most money wins.");
         System.out.println("Each player has to move across the 24 different locations");
@@ -62,6 +101,7 @@ public class GameController {
         System.out.println("If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison");
         System.out.println("Chance cards can be good and dangerous so be careful.");
     }
+
     public GameCreator getNewGame() {
         return newGame;
     }
