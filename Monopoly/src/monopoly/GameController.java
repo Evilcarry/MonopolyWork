@@ -5,6 +5,8 @@
  */
 package monopoly;
 
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Scanner;
 
 /**
@@ -21,8 +23,13 @@ public class GameController {
         int playerNumber = this.setPlayerNumber(); // sets the number of players
 
         this.newGame = new GameCreator(playerNumber); //gamecreator instance that pases the number of players
+
         newGame.createLocations(); //creates all the locations, possibly going to read them off a file
+
         newGame.createPlayers(playerNumber, this.setPlayerName(playerNumber)); //creates the names of each player
+
+        newGame.getPlayers()[1].movePlayer(newGame.getLocations()[2]);
+        
         newGame.createAssets(); //creates all the assets for each location.
 
         int userInput;
@@ -76,12 +83,17 @@ public class GameController {
         return numberOfPlayers;
     }
 
+    /**
+     * This method allows the user to set their name
+     *
+     * @param numberOfPlayers is the number of players that will be playing.
+     * @return names.
+     */
     public String[] setPlayerName(int numberOfPlayers) {
         Scanner playerNameScan = new Scanner(System.in);
         String[] names = new String[numberOfPlayers];
 
         for (int i = 0; i < names.length; i++) {
-            boolean trueTillRightInput = true;
             System.out.println("Please input the name of the player number " + (i + 1));
             names[i] = playerNameScan.nextLine();
             System.out.println("You have entered " + names[i] + " as your name");
@@ -89,6 +101,36 @@ public class GameController {
         return names;
     }
 
+    /*
+    public Integer[] rollToSeePlayerOrder(int numberOfPlayers, GameCreator game) {
+        System.out.println("Now lets see which player will go first");
+        System.out.println("If more than one player rolls the same number a second round of rolling will occur");
+        System.out.println("A die will roll " + numberOfPlayers + " times.");
+
+        Scanner userConfirmation = new Scanner(System.in);
+        LinkedHashSet<Integer> set = new LinkedHashSet<>();
+        Integer[] num = new Integer[numberOfPlayers];
+
+        for (int i = 0; i < numberOfPlayers; i++) {
+            String userInput;
+            RandomNum dieRoll = new RandomNum();
+            System.out.println(game.getPlayers()[i].getName() + "  press enter to roll");
+            userInput = userConfirmation.nextLine();
+        }     
+        return num;
+    }
+    */
+
+    public void buyMenu(GameCreator game, int player)
+    {
+        System.out.println("This is the buy menu, in here you can purchase a house depending on if you have money or not");
+        
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Here are your options.");
+        System.out.println(game.getPlayers()[player].getName()+" is currently standing at location "+ game.getPlayers()[player].getCurrentLocation());
+        System.out.println("The price of "+ game.getPlayers()[player].getCurrentLocation() + " is " + game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
+    }
+    
     /**
      * This method displays the instructions to the monopoly game.
      */
