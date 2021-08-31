@@ -11,7 +11,7 @@ package monopoly;
  */
 public class GameCreator {
 
-    private static GlobalLocation[] locations = new GlobalLocation[24];
+    private GlobalLocation[] locations;
     private Player[] players;
     private Assets[] assets;
     
