@@ -49,5 +49,10 @@ public class GotoJail extends GlobalLocation implements JailInterface{
         }
     }   
 */
+
+    @Override
+    public HousingLocation cloneObject() {
+        return null;
+    }
     
 }

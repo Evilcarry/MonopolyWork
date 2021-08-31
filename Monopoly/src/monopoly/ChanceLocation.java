@@ -9,7 +9,8 @@ package monopoly;
  *
  * @author benjh
  */
-public class ChanceLocation extends GlobalLocation implements ActionInterface{
+public class ChanceLocation extends GlobalLocation implements ActionInterface {
+
     private int chanceID;
     private String actionMessage;
 
@@ -35,9 +36,15 @@ public class ChanceLocation extends GlobalLocation implements ActionInterface{
         this.actionMessage = actionMessage;
     }
 
+    
+
     @Override
-    public void chanceRoll()
-    {
+    public void chanceRoll() {
         //TODO: do something.
+    }
+
+    @Override
+    public HousingLocation cloneObject() {
+        return null;
     }
 }

@@ -22,7 +22,13 @@ public class HousingLocation extends GlobalLocation implements HousingInterface{
         this.rentPrice = rentPrice;
         this.sellPrice = sellPrice;
     }
-
+    
+    @Override
+    public HousingLocation cloneObject()
+    {
+        return this;
+    }
+    
     public int getPrice() {
         return price;
     }
@@ -53,30 +59,5 @@ public class HousingLocation extends GlobalLocation implements HousingInterface{
 
     public void setSellPrice(int sellPrice) {
         this.sellPrice = sellPrice;
-    }
-
-    @Override
-    public void purchaseProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void sellProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void upgradeProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void downgradeProperty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void payRent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
