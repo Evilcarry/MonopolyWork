@@ -22,7 +22,13 @@ public class HousingLocation extends GlobalLocation implements HousingInterface{
         this.rentPrice = rentPrice;
         this.sellPrice = sellPrice;
     }
-
+    
+    @Override
+    public HousingLocation cloneObject()
+    {
+        return this;
+    }
+    
     public int getPrice() {
         return price;
     }

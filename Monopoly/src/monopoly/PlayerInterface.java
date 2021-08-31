@@ -14,4 +14,5 @@ public interface PlayerInterface {
     public void payPlayer(int money);
     public void chargePlayer(int money);
     public void purchaseAsset(Assets asset);
+    public void sellAsset(Assets asset);
 }

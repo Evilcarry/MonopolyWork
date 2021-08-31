@@ -28,6 +28,11 @@ public class GoLocation extends GlobalLocation implements GoInterface{
     }
     
     @Override
+    public HousingLocation cloneObject() {
+        return null;
+    }
+    
+    @Override
     public void givesMoney() {
         //TODO give money to player
     }

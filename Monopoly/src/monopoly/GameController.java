@@ -28,9 +28,10 @@ public class GameController {
 
         newGame.createPlayers(playerNumber, this.setPlayerName(playerNumber)); //creates the names of each player
 
-        newGame.getPlayers()[1].movePlayer(newGame.getLocations()[2]);
-        
         newGame.createAssets(); //creates all the assets for each location.
+
+        this.buyMenu(newGame, 1); //buy menu
+        this.sellMenu(newGame, 1); //sell menu
 
         int userInput;
         boolean stop = false;
@@ -119,18 +120,71 @@ public class GameController {
         }     
         return num;
     }
-    */
+     */
+    /**
+     * This is the buyMenu method, it will display a menu for the user so they
+     * can purchase assets.
+     *
+     * @param game which is a GameCreator object.
+     * @param player is the number of the player.
+     */
+    public void buyMenu(GameCreator game, int player) {
+        if (game.getPlayers()[player].getCurrentLocation().getLocationID() % 3 == 0) {
+            System.out.println("Sorry this property is not for sale!");
+        } else {
+            System.out.println("---------------------------------------------------------------------------------------------");
+            System.out.println("This is the buy menu, in here you can purchase a house depending on if you have money or not");
 
-    public void buyMenu(GameCreator game, int player)
-    {
-        System.out.println("This is the buy menu, in here you can purchase a house depending on if you have money or not");
-        
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Here are your options.");
-        System.out.println(game.getPlayers()[player].getName()+" is currently standing at location "+ game.getPlayers()[player].getCurrentLocation());
-        System.out.println("The price of "+ game.getPlayers()[player].getCurrentLocation() + " is " + game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
+            Scanner scan = new Scanner(System.in);
+            System.out.println("Here are your options.");
+            System.out.println(game.getPlayers()[player].getName() + " is currently standing at location " + game.getPlayers()[player].getCurrentLocation());
+            System.out.println("The price of " + game.getPlayers()[player].getCurrentLocation() + " is " + game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice());
+            System.out.println("You currently have " + game.getPlayers()[player].getMoney());
+            System.out.println("Would you like to purchase it? press 1 to buy, press anything else to exit the buy menu");
+            if (scan.nextInt() == 1) {
+                if (game.getPlayers()[player].getMoney() >= game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice()) {
+                    game.getPlayers()[player].purchaseAsset(game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
+                    System.out.println("You have successfully purchased this asset");
+                } else {
+                    System.out.println("Sorry you do not have sufficient funds to purchase this properly");
+                }
+            } else {
+                System.out.println("Thank you for accessing the buy menu!");
+                System.out.println("---------------------------------------------------------------------------------------------");
+            }
+        }
     }
-    
+
+    public void sellMenu(GameCreator game, int player) {
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println("Welcome to the sell menu");
+        System.out.println("Here you can sell your assets!");
+        System.out.println("Here is a list of all the assets you currently own");
+
+        for (int i = 0; i < 24; i++) {
+            if (game.getPlayers()[player].getAsset()[i] != null) {
+                System.out.println(game.getPlayers()[player].getAsset()[i]);
+            }
+        }
+        System.out.println("Would you like to sell any assets? if so please input the id of the asset you would like to sell");
+        Scanner sellScan = new Scanner(System.in);
+        int locationOfSell = sellScan.nextInt();
+        boolean trueTillRightInput = true;
+
+        while (trueTillRightInput) {
+            if (null == game.getPlayers()[player].getAsset()[locationOfSell]) {
+                sellScan.next();
+                System.out.println("youve entered the wrong location, please try again");
+                locationOfSell = sellScan.nextInt();
+            } else {
+                System.out.println("congratulations you've sold your asset");
+                game.getPlayers()[player].sellAsset(game.getPlayers()[player].getAsset()[locationOfSell]);
+                trueTillRightInput = false;
+            }
+        }
+
+    }
+
     /**
      * This method displays the instructions to the monopoly game.
      */

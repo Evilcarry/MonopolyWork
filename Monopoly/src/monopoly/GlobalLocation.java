@@ -4,7 +4,7 @@ package monopoly;
  *
  * @author benjh
  */
-public class GlobalLocation {
+public abstract class GlobalLocation {
     private String name;
     private int locationID;
     
@@ -29,6 +29,8 @@ public class GlobalLocation {
     public void setLocationID(int locationID) {
         this.locationID = locationID;
     }
+    
+    abstract public HousingLocation cloneObject();
 
     @Override
     public String toString() {

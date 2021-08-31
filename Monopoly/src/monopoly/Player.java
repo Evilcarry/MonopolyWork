@@ -15,7 +15,7 @@ public class Player implements PlayerInterface{
     private GlobalLocation currentLocation;
     private int jailCounter;
     private boolean jailState;
-    private Assets[] asset = new Assets[24];
+    private Assets[] asset;
 
     public Player(String name,GlobalLocation currentLocation)
     {
@@ -24,7 +24,7 @@ public class Player implements PlayerInterface{
         this.currentLocation = currentLocation;
         this.jailCounter = 0;
         this.jailState = false;
-        this.asset = null;
+        this.asset = new Assets[24];
     }
     
     public Assets[] getAsset() {
@@ -113,7 +113,13 @@ public class Player implements PlayerInterface{
     }
     
     @Override
+    public void sellAsset(Assets asset)
+    {
+        this.asset[asset.getBoardPosition().getLocationID()] = null;
+    }
+    
+    @Override
     public String toString() {
-        return "Name: " + name +  ", money: "+ money + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset;
+        return "Name: " + name +  ", money: "+ money + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset.toString();
     }
 }
