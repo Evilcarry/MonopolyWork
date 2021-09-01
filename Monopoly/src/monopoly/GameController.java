@@ -29,23 +29,23 @@ public class GameController {
         newGame.createPlayers(playerNumber, this.setPlayerName(playerNumber)); //creates the names of each player
 
         newGame.createAssets(); //creates all the assets for each location.
-
+        /*
         this.buyMenu(newGame, 1); //buy menu
         this.sellMenu(newGame, 1); //sell menu
         this.updgradeMenu(newGame, 1); //upgrade menu
-        this.updgradeMenu(newGame, 1);
-
+        */
+        
         int userInput;
-        boolean stop = false;
-        Scanner scan = new Scanner(System.in);
-        while (!stop) {
+        boolean runTillStop = true;
+        Scanner userScan = new Scanner(System.in);
+        while (runTillStop) {
 
             System.out.println("Welcome to monopoly");
             System.out.println("Press 1 to start 2 to end");
-            userInput = scan.nextInt();
+            userInput = userScan.nextInt();
 
             if (userInput == 2) {
-                stop = true;
+                runTillStop = true;
             } else {
                 System.out.println("This is a list of all the players");
                 for (int i = 0; i < playerNumber; i++) {
@@ -266,7 +266,7 @@ public class GameController {
                                 game.getPlayers()[player].upgradeAsset(game.getPlayers()[player].getAsset()[locationOfUpgrade], levelOfUpgrade);
                                 System.out.println("Thank you for accessing the upgrade menu!");
                                 System.out.println("---------------------------------------------------------------------------------------------");
-                                trueTillRightInput = false;
+                                trueTillRightInputTwo = false;
                             }
                         } else {
                             System.out.println("It appears you've entered the wrong input");
