@@ -10,15 +10,15 @@ package monopoly;
  * @author benjh
  */
 public class Assets {
+
     private GlobalLocation location;
     private int level;
 
-    public Assets(GlobalLocation boardPosition, int level)
-    {
+    public Assets(GlobalLocation boardPosition, int level) {
         this.location = boardPosition;
         this.level = level;
     }
-    
+
     public GlobalLocation getBoardPosition() {
         return location;
     }
@@ -32,12 +32,18 @@ public class Assets {
     }
 
     public void setLevel() {
-        this.level=+1;
+        if (this.getLevel() > 4) {
+            System.out.println("Trying to upgrade to higher than level 4?");
+            System.out.println("Nice try, but that is not allowed");
+        } else {
+            this.level = this.getLevel()+1;
+        }
+
     }
 
     @Override
     public String toString() {
         return "Assets{" + "location=" + location + ", level=" + level + '}';
     }
-    
+
 }

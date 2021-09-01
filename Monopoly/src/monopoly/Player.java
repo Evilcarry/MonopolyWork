@@ -9,7 +9,8 @@ package monopoly;
  *
  * @author benjh
  */
-public class Player implements PlayerInterface{
+public class Player implements PlayerInterface {
+
     private int money;
     private String name;
     private GlobalLocation currentLocation;
@@ -17,8 +18,7 @@ public class Player implements PlayerInterface{
     private boolean jailState;
     private Assets[] asset;
 
-    public Player(String name,GlobalLocation currentLocation)
-    {
+    public Player(String name, GlobalLocation currentLocation) {
         this.money = 200000;
         this.name = name;
         this.currentLocation = currentLocation;
@@ -26,7 +26,7 @@ public class Player implements PlayerInterface{
         this.jailState = false;
         this.asset = new Assets[24];
     }
-    
+
     public Assets[] getAsset() {
         return asset;
     }
@@ -34,7 +34,7 @@ public class Player implements PlayerInterface{
     public void setAsset(Assets asset) {
         this.asset[this.currentLocation.getLocationID()] = asset;
     }
-    
+
     public int getMoney() {
         return money;
     }
@@ -58,7 +58,7 @@ public class Player implements PlayerInterface{
     public void setCurrentLocation(GlobalLocation currentLocation) {
         this.currentLocation = currentLocation;
     }
-    
+
     public int getJailCounter() {
         return jailCounter;
     }
@@ -73,10 +73,12 @@ public class Player implements PlayerInterface{
 
     public void setJailState(boolean jailState) {
         this.jailState = jailState;
-    }  
+    }
 
-     /**
-     * This method moves a player to a different location, based on the dice roll or if they are sent to jail.
+    /**
+     * This method moves a player to a different location, based on the dice
+     * roll or if they are sent to jail.
+     *
      * @param location
      */
     @Override
@@ -85,43 +87,54 @@ public class Player implements PlayerInterface{
     }
 
     /**
-     * This method pays the player a certain amount of money, based on a chance card or go location.
+     * This method pays the player a certain amount of money, based on a chance
+     * card or go location.
+     *
      * @param money
      */
     @Override
     public void payPlayer(int money) {
-        this.money+= money;
+        this.money += money;
     }
-    
+
     /**
-     * This method charges the player a certain amount of money, based on a chance card or if they purchased an asset..
+     * This method charges the player a certain amount of money, based on a
+     * chance card or if they purchased an asset..
+     *
      * @param money
      */
     @Override
-    public void chargePlayer(int money)
-    {
-        this.money-= money;
+    public void chargePlayer(int money) {
+        this.money -= money;
     }
-    
+
     /**
      * This method is used when the player purchases a new asset.
+     *
      * @param asset
      */
     @Override
     public void purchaseAsset(Assets asset) {
         this.asset[this.currentLocation.getLocationID()] = asset;
-        this.setMoney(money - this.currentLocation.cloneObject().getPrice());
+        this.setMoney(this.getMoney() - this.currentLocation.cloneObject().getPrice());
     }
-    
+
     @Override
-    public void sellAsset(Assets asset)
-    {
+    public void sellAsset(Assets asset) {
         this.asset[asset.getBoardPosition().getLocationID()] = null;
-        this.setMoney(money + this.currentLocation.cloneObject().getSellPrice());
+        this.setMoney(this.getMoney() + this.currentLocation.cloneObject().getSellPrice());
     }
-    
+
+    @Override
+    public void upgradeAsset(Assets asset, int level) {
+        for (int i = 0; i < level; i++) {
+            this.asset[asset.getBoardPosition().getLocationID()].setLevel();
+            this.setMoney(this.getMoney() - asset.getBoardPosition().cloneObject().getPrice());
+        }
+    }
+
     @Override
     public String toString() {
-        return "Name: " + name +  ", money: "+ money + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset.toString();
+        return "Name: " + name + ", money: " + money + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset.toString();
     }
 }

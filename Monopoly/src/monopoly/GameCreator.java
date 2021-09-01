@@ -49,10 +49,17 @@ public class GameCreator {
                 this.locations[i] = new GotoJail("Go to jail", i);
             }
             else if (i % 3 == 0) {
+                if (i == 15)
+                {
                 locations[i] = new ChanceLocation("Chance", i, i, "this is a chance card");
+                }
+                if (i == 18)
+                {
+                    
+                }
             } else 
             {
-                this.locations[i] = new HousingLocation("house: " + i, i, 20, 0, 10, 15);
+                this.locations[i] = new HousingLocation("house: " + i, i, 10000, 0, 5000, 5000);
             }
         }
     }

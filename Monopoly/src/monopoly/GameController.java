@@ -32,6 +32,8 @@ public class GameController {
 
         this.buyMenu(newGame, 1); //buy menu
         this.sellMenu(newGame, 1); //sell menu
+        this.updgradeMenu(newGame, 1); //upgrade menu
+        this.updgradeMenu(newGame, 1);
 
         int userInput;
         boolean stop = false;
@@ -159,10 +161,10 @@ public class GameController {
     }
 
     /**
-     * This method displays a sell menu for the players.
-     * It checks to see if the player has any assets
-     * The location of the assets
-     * And it asks the user to see if they will like to sell it or not.
+     * This method displays a sell menu for the players. It checks to see if the
+     * player has any assets, the location of the assets and it asks the user to
+     * see if they will like to sell it or not.
+     *
      * @param game GameCreator object
      * @param player the number of the player.
      */
@@ -197,6 +199,82 @@ public class GameController {
                     trueTillRightInput = false;
                 } else if (locationOfSell == 0) {
                     System.out.println("Thank you for accessing the sell menu!");
+                    System.out.println("---------------------------------------------------------------------------------------------");
+                    trueTillRightInput = false;
+                } else {
+                    System.out.println("youve entered the wrong location, please try again");
+                }
+            } else {
+                System.out.println("It appears that you've entered the wrong input, please try again");
+            }
+        }
+    }
+
+    /**
+     * This method displays an upgrade menu for the players. It checks to see if
+     * the player has any assets, the location of the assets and it asks the
+     * user to see if they will like to upgrade it or not.
+     *
+     * @param game GameCreator object
+     * @param player the number of the player.
+     */
+    public void updgradeMenu(GameCreator game, int player) {
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println("Welcome to the upgrade menu");
+        System.out.println("Here you can upgrade your currently owned assets!");
+        System.out.println("Here is a list of all the assets you currently own");
+
+        boolean trueTillRightInput = false;
+
+        for (int i = 0; i < 24; i++) {
+            if (game.getPlayers()[player].getAsset()[i] != null) {
+                System.out.println(game.getPlayers()[player].getAsset()[i]);
+                trueTillRightInput = true;
+            }
+        }
+        if (!trueTillRightInput) {
+            System.out.println("It appears you do not own any assets at the moment. Access the upgrade menu when you own something!");
+            System.out.println("---------------------------------------------------------------------------------------------");
+        }
+        while (trueTillRightInput) {
+            System.out.println("Would you like to upgrade any assets? if so please input the location ID of the asset you would like to upgrade");
+            System.out.println("if you do not want to upgrade any of your assets please input the number 0");
+            System.out.println("Each upgrade costs the same amount as buying the property, keep in mind that if you spend all your money you will lose the game");
+            Scanner upgradeScan = new Scanner(System.in);
+            if (upgradeScan.hasNextInt()) {
+                int locationOfUpgrade = upgradeScan.nextInt();
+                if (game.getPlayers()[player].getAsset()[locationOfUpgrade] != null) {
+                    boolean trueTillRightInputTwo = true;
+                    while (trueTillRightInputTwo) {
+                        System.out.println("Please input the level of upgrade you want to upgrade it to, ranges from 1 to 4");
+                        if (upgradeScan.hasNextInt()) {
+                            int levelOfUpgrade = upgradeScan.nextInt();
+                            if (levelOfUpgrade < 1 || levelOfUpgrade > 4) {
+                                System.out.println("It appears that the number you've entered is not between 1 and 4");
+                            } else if ((game.getPlayers()[player].getAsset()[locationOfUpgrade].getLevel() + levelOfUpgrade) > 4) {
+                                System.out.println("The maximum upgrade level is 4, You cannot upgrade further than that");
+                                System.out.println("Please input a number that will make the upgrade level a maximum of 4");
+                                System.out.println("Or if you chose the wrong asset please press 0");
+                                if (upgradeScan.hasNextInt()) {
+                                    levelOfUpgrade = upgradeScan.nextInt();
+                                    if (levelOfUpgrade == 0) {
+                                        trueTillRightInputTwo = false;
+                                    }
+                                }
+                            } else {
+                                System.out.println(game.getPlayers()[player].getAsset()[locationOfUpgrade] + " will be upgraded to level" + levelOfUpgrade);
+                                game.getPlayers()[player].upgradeAsset(game.getPlayers()[player].getAsset()[locationOfUpgrade], levelOfUpgrade);
+                                System.out.println("Thank you for accessing the upgrade menu!");
+                                System.out.println("---------------------------------------------------------------------------------------------");
+                                trueTillRightInput = false;
+                            }
+                        } else {
+                            System.out.println("It appears you've entered the wrong input");
+                            System.out.println("Please try again");
+                        }
+                    }
+                } else if (locationOfUpgrade == 0) {
+                    System.out.println("Thank you for accessing the upgrade menu!");
                     System.out.println("---------------------------------------------------------------------------------------------");
                     trueTillRightInput = false;
                 } else {
