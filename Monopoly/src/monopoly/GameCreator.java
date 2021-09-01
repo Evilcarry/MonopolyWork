@@ -52,6 +52,8 @@ public class GameCreator {
                 this.locations[i] = new HousingLocation("house: " + i, i, 10000, 0, 5000, 5000);
             }
         }
+        
+        this.locations[0] = new GoLocation("Go", 0);
     }
 
     public GlobalLocation[] getLocations() {

@@ -33,23 +33,89 @@ public class GameController {
         this.buyMenu(newGame, 1); //buy menu
         this.sellMenu(newGame, 1); //sell menu
         this.updgradeMenu(newGame, 1); //upgrade menu
-        */
-        
+         */
+
         int userInput;
         boolean runTillStop = true;
         Scanner userScan = new Scanner(System.in);
+
         while (runTillStop) {
-
+            System.out.println("---------------------------------------------------------------------------------------------");
             System.out.println("Welcome to monopoly");
-            System.out.println("Press 1 to start 2 to end");
-            userInput = userScan.nextInt();
+            System.out.println("Press 0 to end, 1 to start, 2 to load game from a save");
 
-            if (userInput == 2) {
-                runTillStop = true;
-            } else {
-                System.out.println("This is a list of all the players");
-                for (int i = 0; i < playerNumber; i++) {
-                    System.out.println(newGame.getPlayers()[i]);
+            if (userScan.hasNextInt()) {
+                userInput = userScan.nextInt();
+
+                if (userInput == 0) {
+                    runTillStop = true;
+                } else if (userInput == 1) {
+                    boolean gameRun = true;
+
+                    switch (playerNumber) {
+                        case 2:
+                            while (gameRun) {
+                                if (newGame.getPlayers()[0].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                } else if (newGame.getPlayers()[0].getMoney() < 0) {
+                                    System.out.println(newGame.getPlayers()[0].getName() + " has ran out of money! you've lost the game buddy.");
+                                    System.out.println(newGame.getPlayers()[1].getName() + " has won the game! Congratulatios");
+                                    gameRun = false;
+                                    runTillStop = false;
+                                }
+                                if (newGame.getPlayers()[1].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                } else if (newGame.getPlayers()[1].getMoney() < 0) {
+                                    System.out.println(newGame.getPlayers()[1].getName() + " has ran out of money! you've lost the game buddy.");
+                                    System.out.println(newGame.getPlayers()[0].getName() + " has won the game! Congratulatios");
+                                    gameRun = false;
+                                    runTillStop = false;
+                                }
+                            }
+                            break;
+                        case 3:
+                            while (gameRun) {
+                                if (newGame.getPlayers()[0].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[1].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[2].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                            }
+                            break;
+                        case 4:
+                            while (gameRun) {
+                                if (newGame.getPlayers()[0].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[1].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[2].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[3].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+
+                            }
+                            break;
+                        default:
+                            System.out.println("we havent implemented this part yet");
+                            break;
+                    }
                 }
             }
         }
