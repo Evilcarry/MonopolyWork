@@ -35,7 +35,7 @@ public class GameCreator {
      */
     public void createPlayers(int numberOfPlayers, String playerName[]) {
         for (int i = 0; i < numberOfPlayers; i++) {
-            this.players[i] = new Player(playerName[i], locations[2]);
+            this.players[i] = new Player(playerName[i], locations[0]);
         }
     }
 
