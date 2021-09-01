@@ -34,7 +34,7 @@ public abstract class GlobalLocation {
 
     @Override
     public String toString() {
-        return "GlobalLocation{" + "name=" + name + ", locationID=" + locationID + '}';
+        return "Name of the location: " + name + ", locationID: " + locationID;
     }
     
 }

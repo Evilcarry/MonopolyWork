@@ -29,27 +29,111 @@ public class GameController {
         newGame.createPlayers(playerNumber, this.setPlayerName(playerNumber)); //creates the names of each player
 
         newGame.createAssets(); //creates all the assets for each location.
-
+        /*
         this.buyMenu(newGame, 1); //buy menu
         this.sellMenu(newGame, 1); //sell menu
         this.updgradeMenu(newGame, 1); //upgrade menu
-        this.updgradeMenu(newGame, 1);
+         */
 
         int userInput;
-        boolean stop = false;
-        Scanner scan = new Scanner(System.in);
-        while (!stop) {
+        boolean runTillStop = true;
+        Scanner userScan = new Scanner(System.in);
 
+        while (runTillStop) {
+            System.out.println("---------------------------------------------------------------------------------------------");
             System.out.println("Welcome to monopoly");
-            System.out.println("Press 1 to start 2 to end");
-            userInput = scan.nextInt();
+            System.out.println("Press 0 to end, 1 to start, 2 to load game from a save");
 
-            if (userInput == 2) {
-                stop = true;
-            } else {
-                System.out.println("This is a list of all the players");
-                for (int i = 0; i < playerNumber; i++) {
-                    System.out.println(newGame.getPlayers()[i]);
+            if (userScan.hasNextInt()) {
+                userInput = userScan.nextInt();
+
+                if (userInput == 0) {
+                    runTillStop = true;
+                } else if (userInput == 1) {
+                    boolean gameRun = true;
+
+                    switch (playerNumber) {
+                        case 2:
+                            while (gameRun) {
+                                if (newGame.getPlayers()[0].getMoney() > 0) {
+                                    int userRoll = this.menuLoader(newGame, 0, this.playerMessage(newGame, 0));
+                                    if (userRoll == 0) {
+                                        System.out.println("time for you to roll your dice");
+                                        int diceRoll = this.diceRoll();
+                                        System.out.println(newGame.getPlayers()[0].getName() + " has rolled a " + diceRoll + " , you will move " + diceRoll + " spaces");
+                                        newGame.getPlayers()[0].setCurrentLocation(newGame.getLocations()[newGame.getPlayers()[0].getCurrentLocation().getLocationID() + diceRoll]);
+                                        System.out.println(newGame.getPlayers()[0]);
+                                    } else {
+                                        newGame.getPlayers()[0].setCurrentLocation(newGame.getLocations()[newGame.getPlayers()[0].getCurrentLocation().getLocationID() + userRoll]);
+                                        System.out.println(newGame.getPlayers()[0]);
+                                    }
+                                } else if (newGame.getPlayers()[0].getMoney() < 0) {
+                                    System.out.println(newGame.getPlayers()[0].getName() + " has ran out of money! you've lost the game buddy.");
+                                    System.out.println(newGame.getPlayers()[1].getName() + " has won the game! Congratulatios");
+                                    gameRun = false;
+                                    runTillStop = false;
+                                }
+                                if (newGame.getPlayers()[1].getMoney() > 0) {
+                                    int userRoll = this.menuLoader(newGame, 1, this.playerMessage(newGame, 1));
+                                    if (userRoll == 0) {
+                                        System.out.println("time for you to roll your dice");
+                                        int diceRoll = this.diceRoll();
+                                        System.out.println(newGame.getPlayers()[1].getName() + " has rolled a " + diceRoll + " , you will move " + diceRoll + " spaces");
+                                        newGame.getPlayers()[1].setCurrentLocation(newGame.getLocations()[newGame.getPlayers()[1].getCurrentLocation().getLocationID() + diceRoll]);
+                                        System.out.println(newGame.getPlayers()[1]);
+                                    } else {
+                                        newGame.getPlayers()[1].setCurrentLocation(newGame.getLocations()[newGame.getPlayers()[1].getCurrentLocation().getLocationID() + userRoll]);
+                                        System.out.println(newGame.getPlayers()[1]);
+                                    }
+                                } else if (newGame.getPlayers()[1].getMoney() < 0) {
+                                    System.out.println(newGame.getPlayers()[1].getName() + " has ran out of money! you've lost the game buddy.");
+                                    System.out.println(newGame.getPlayers()[0].getName() + " has won the game! Congratulatios");
+                                    gameRun = false;
+                                    runTillStop = false;
+                                }
+                            }
+                            break;
+                        case 3:
+                            while (gameRun) {
+                                if (newGame.getPlayers()[0].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[1].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[2].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                            }
+                            break;
+                        case 4:
+                            while (gameRun) {
+                                if (newGame.getPlayers()[0].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[1].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[2].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+                                if (newGame.getPlayers()[3].getMoney() > 0) {
+                                    System.out.println("---------------------------------------------------------------------------------------------");
+                                    //TODO: Offer menu options, buy menu, sell menu, upgrade menu, etc.
+                                }
+
+                            }
+                            break;
+                        default:
+                            System.out.println("we havent implemented this part yet");
+                            break;
+                    }
                 }
             }
         }
@@ -87,7 +171,7 @@ public class GameController {
     }
 
     /**
-     * This method allows the user to set their name
+     * This method allows the userRoll to set their name
      *
      * @param numberOfPlayers is the number of players that will be playing.
      * @return names.
@@ -124,8 +208,8 @@ public class GameController {
     }
      */
     /**
-     * This is the buyMenu method, it will display a menu for the user so they
-     * can purchase assets.
+     * This is the buyMenu method, it will display a menu for the userRoll so
+     * they can purchase assets.
      *
      * @param game which is a GameCreator object.
      * @param player is the number of the player.
@@ -266,7 +350,7 @@ public class GameController {
                                 game.getPlayers()[player].upgradeAsset(game.getPlayers()[player].getAsset()[locationOfUpgrade], levelOfUpgrade);
                                 System.out.println("Thank you for accessing the upgrade menu!");
                                 System.out.println("---------------------------------------------------------------------------------------------");
-                                trueTillRightInput = false;
+                                trueTillRightInputTwo = false;
                             }
                         } else {
                             System.out.println("It appears you've entered the wrong input");
@@ -284,6 +368,49 @@ public class GameController {
                 System.out.println("It appears that you've entered the wrong input, please try again");
             }
         }
+    }
+
+    public int playerMessage(GameCreator game, int playerNum) {
+        Scanner userScan = new Scanner(System.in);
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println(game.getPlayers()[playerNum].getName() + " here are your options, Press 1 to roll your dice, press 2 for the buy meny, press 3 for the sell menu, press 4 for the upgrade menu, to skip your turn press 0");
+        boolean TrueTillRightInput = true;
+        int userInput = 0;
+        while (TrueTillRightInput) {
+            if (userScan.hasNextInt()) {
+                userInput = userScan.nextInt();
+                if (userInput > 4 && userInput < 0) {
+                    System.out.println("It appears you've entered the wrong input!");
+                    System.out.println("Please try again");
+                    userScan.next();
+                } else {
+                    TrueTillRightInput = false;
+                }
+            }
+        }
+        return userInput;
+    }
+
+    public int menuLoader(GameCreator game, int player, int userAnswer) {
+        switch (userAnswer) {
+            case 1:
+                return this.diceRoll();
+            case 2:
+                this.buyMenu(game, player);
+                break;
+            case 3:
+                this.sellMenu(game, player);
+                break;
+            case 4:
+                this.updgradeMenu(game, player);
+                break;
+        }
+        return 0;
+    }
+
+    public int diceRoll() {
+        RandomNum roll = new RandomNum();
+        return roll.randomNumGenerator();
     }
 
     /**
