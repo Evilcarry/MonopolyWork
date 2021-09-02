@@ -9,7 +9,7 @@ package monopoly;
  *
  * @author benjh
  */
-public class Assets {
+public class Assets implements java.io.Serializable{
 
     private GlobalLocation location;
     private int level;

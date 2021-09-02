@@ -4,7 +4,7 @@ package monopoly;
  *
  * @author benjh
  */
-public abstract class GlobalLocation {
+public abstract class GlobalLocation implements java.io.Serializable{
     private String name;
     private int locationID;
     

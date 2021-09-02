@@ -9,7 +9,7 @@ package monopoly;
  *
  * @author benjh
  */
-public class GameCreator {
+public class GameCreator implements java.io.Serializable{
 
     private GlobalLocation[] locations;
     private Player[] players;
@@ -35,7 +35,7 @@ public class GameCreator {
      */
     public void createPlayers(int numberOfPlayers, String playerName[]) {
         for (int i = 0; i < numberOfPlayers; i++) {
-            this.players[i] = new Player(playerName[i], locations[2]);
+            this.players[i] = new Player(playerName[i], locations[0]);
         }
     }
 
