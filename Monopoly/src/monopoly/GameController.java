@@ -11,16 +11,20 @@ import java.util.Scanner;
  *
  * @author benjh
  */
-public class GameController {
+public class GameController implements ActionInterface {
 
     private GameCreator newGame;
 
+    /**
+     * This method starts the game
+     */
+    @Override
     public void gameStart() {
         this.instructions();//to display instructions on the game
-        int playerNumber = this.setPlayerNumber(); // sets the number of players
-        this.newGame = new GameCreator(playerNumber); //gamecreator instance that pases the number of players
+        int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
+        this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
         newGame.createLocations(); //creates all the locations, possibly going to read them off a file
-        newGame.createPlayers(playerNumber, this.setPlayerName(playerNumber)); //creates the names of each player
+        newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
         newGame.createAssets(); //creates all the assets for each location.
 
         int userInput;
@@ -38,7 +42,7 @@ public class GameController {
                     if (userInput == 0) {
                         runTillStop = false;
                     } else if (userInput == 1) {
-                        this.gameForDifferentPlayer(playerNumber, newGame);
+                        this.gameForDifferentPlayer(amountOfPlayers, newGame);
                     } else if (userInput == 2) {
                         //TODO: read file and load from here?
                     } else {
@@ -59,6 +63,7 @@ public class GameController {
      *
      * @return the number of players, between 2 and 4.
      */
+    @Override
     public int setPlayerNumber() {
         Scanner playerNumScan = new Scanner(System.in);
         int numberOfPlayers = 2; // initiated to the default number.
@@ -89,6 +94,7 @@ public class GameController {
      * @param numberOfPlayers is the number of players that will be playing.
      * @return names.
      */
+    @Override
     public String[] setPlayerName(int numberOfPlayers) {
         Scanner playerNameScan = new Scanner(System.in);
         String[] names = new String[numberOfPlayers];
@@ -108,6 +114,7 @@ public class GameController {
      * @param game which is a GameCreator object.
      * @param player is the number of the player.
      */
+    @Override
     public void buyMenu(GameCreator game, int player) {
         if (game.getPlayers()[player].getCurrentLocation().getLocationID() % 3 == 0) {
             System.out.println("Sorry this property is not for sale!");
@@ -146,6 +153,7 @@ public class GameController {
      * @param game GameCreator object
      * @param player the number of the player.
      */
+    @Override
     public void sellMenu(GameCreator game, int player) {
         System.out.println("---------------------------------------------------------------------------------------------");
         System.out.println("Welcome to the sell menu");
@@ -196,6 +204,7 @@ public class GameController {
      * @param game GameCreator object
      * @param player the number of the player.
      */
+    @Override
     public void updgradeMenu(GameCreator game, int player) {
         System.out.println("---------------------------------------------------------------------------------------------");
         System.out.println("Welcome to the upgrade menu");
@@ -272,6 +281,7 @@ public class GameController {
      * @param playerNum
      * @return the number the user input.
      */
+    @Override
     public int playerMessage(GameCreator game, int playerNum) {
         Scanner userScan = new Scanner(System.in);
         System.out.println("---------------------------------------------------------------------------------------------");
@@ -302,6 +312,7 @@ public class GameController {
      * @param userAnswer
      * @return
      */
+    @Override
     public int menuLoader(GameCreator game, int player, int userAnswer) {
         switch (userAnswer) {
             case 1:
@@ -326,15 +337,16 @@ public class GameController {
      * @param player
      * @param diceRoll
      */
+    @Override
     public void movePlayerAround(GameCreator game, int player, int diceRoll) {
         System.out.println(game.getPlayers()[player].getName() + " has rolled a " + diceRoll + " , you will move " + diceRoll + " spaces");
         int counter = game.getPlayers()[player].getCurrentLocation().getLocationID() + diceRoll;
         if (counter > 23) {
             counter = counter - 23;
             game.getPlayers()[player].setRounds(game.getPlayers()[player].getRounds() + 1);
-            game.getPlayers()[player].setCurrentLocation(game.getLocations()[counter]);
+            game.getPlayers()[player].movePlayer(game.getLocations()[counter]);
         } else {
-            game.getPlayers()[player].setCurrentLocation(game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID() + diceRoll]);
+            game.getPlayers()[player].movePlayer(game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID() + diceRoll]);
         }
         System.out.println(game.getPlayers()[player]);
     }
@@ -344,11 +356,13 @@ public class GameController {
      *
      * @return the random number generated.
      */
+    @Override
     public int diceRoll() {
         RandomNum roll = new RandomNum();
         return roll.randomNumGenerator();
     }
 
+    @Override
     public void playerEngagement() {
         Scanner engagementScan = new Scanner(System.in);
 
@@ -376,11 +390,13 @@ public class GameController {
      * to either roll or pay their way out.
      *
      * @param game
-     * @param playerNumber
+     * @param player
      */
+    @Override
     public void playerInJailAction(GameCreator game, int player) {
-        System.out.println("It appears you've landed in jail");
-        System.out.println("you are currently locked in jail for 3 turns, if you roll a 6 you will be released from jail, or you can buy your way out for $10000");
+        System.out.println("---------------------------------------------------------------------------------------------");
+        System.out.println(game.getPlayers()[player].getName() + " it appears you've landed in jail");
+        System.out.println("you are currently locked in jail for " + (3 - game.getPlayers()[player].getJailCounter()) + " more turns, if you roll a 6 you will be released from jail, or you can buy your way out for $10000");
         System.out.println("you currently have: " + game.getPlayers()[player].getMoney() + ". Remember that if you go negative you will lose the game");
         System.out.println("Press 1 to roll the die or press 2 to pay your way out.");
 
@@ -394,16 +410,20 @@ public class GameController {
                     System.out.println("you have rolled a " + diceRoll);
                     if (diceRoll == 6) {
                         System.out.println("Congratulations, you are out of jail");
-                        game.getPlayers()[player].setJailState(false);
-                        game.getPlayers()[player].setJailCounter(0);
-                        trueTillRightInput = false;
+                        if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
+                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
+                        } else {
+                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
+                        }
                     } else {
                         game.getPlayers()[player].setJailCounter(game.getPlayers()[player].getJailCounter() + 1);
                         if (game.getPlayers()[player].getJailCounter() == 3) {
                             System.out.println("You are out of jail!, in your next turn you will be able to play again");
-                            game.getPlayers()[player].setJailState(false);
-                            game.getPlayers()[player].setJailCounter(0);
-                            trueTillRightInput = false;
+                            if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
+                                game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
+                            } else {
+                                game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
+                            }
                         } else {
                             System.out.println("unfortunately you didnt roll a 6, you are still in jail for " + (3 - game.getPlayers()[player].getJailCounter()) + " more turns");
                             trueTillRightInput = false;
@@ -413,28 +433,44 @@ public class GameController {
                     game.getPlayers()[player].chargePlayer(10000);
                     if (game.getPlayers()[player].getMoney() > 0) {
                         System.out.println("You have successfully purchased your way out of jail");
-                        game.getPlayers()[player].setJailState(false);
-                        game.getPlayers()[player].setJailCounter(0);
-                        trueTillRightInput = false;
+                        if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
+                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
+                        } else {
+                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
+                        }
                     } else {
                         System.out.println("It seems that you tried to purchase your way out of jail but you can't afford it");
                         System.out.println("Unfortunately you are now in the negative.");
                         trueTillRightInput = false;
                     }
+                } else {
+                    System.out.println("It apears you have entered the wrong input! please try again");
+                    jailScan.next();
                 }
+            } else {
+                System.out.println("It apears you have entered the wrong input! please try again");
+                jailScan.next();
             }
         }
     }
 
     /**
      * This is in charge of running the turn of each player
+     *
      * @param game GameCrator object
      * @param player integer stating which player
      */
+    @Override
     public void playerTurn(GameCreator game, int player) {
         if (game.getPlayers()[player].isJailState()) {
             this.playerInJailAction(game, player);
         } else {
+            if (game.getPlayers()[player].getRounds() >= 1) {
+                this.playerPassesThroughGO(game, player);
+            } else if (((game.getPlayers()[player].getCurrentLocation().getLocationID() % 3) == 0) && !game.getPlayers()[player].isJailState() && (game.getPlayers()[player].getCurrentLocation().getLocationID() == 0)) {
+                this.playerLandsOnChance(game, player);
+            }
+
             int userOption = this.menuLoader(game, player, this.playerMessage(game, player));
             if (userOption == 0) {
                 System.out.println("Since you skipped your turn, the die will roll");
@@ -444,6 +480,7 @@ public class GameController {
                 if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                     if (!game.getPlayers()[player].isJailState()) {
                         game.getPlayers()[player].setJailState(true);
+                        System.out.println("It seems that you have commited a crime! you are now in jail for 3 turns!");
                     }
                 }
             } else if (userOption == 2) {
@@ -451,10 +488,22 @@ public class GameController {
                 this.playerEngagement();
                 int diceRoll = this.diceRoll();
                 this.movePlayerAround(game, player, diceRoll);
+                if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
+                    if (!game.getPlayers()[player].isJailState()) {
+                        game.getPlayers()[player].setJailState(true);
+                        System.out.println("It seems that you have commited a crime! you are now in jail for 3 turns!");
+                    }
+                }
             } else if (userOption == 1) {
                 this.playerEngagement();
                 int diceRoll = this.diceRoll();
                 this.movePlayerAround(game, player, diceRoll);
+                if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
+                    if (!game.getPlayers()[player].isJailState()) {
+                        game.getPlayers()[player].setJailState(true);
+                        System.out.println("It seems that you have commited a crime! you are now in jail for 3 turns!");
+                    }
+                }
             }
         }
 
@@ -462,9 +511,11 @@ public class GameController {
 
     /**
      * This will run a different game depending on the number of players.
+     *
      * @param amountOfPlayers
      * @param game GameCreator
      */
+    @Override
     public void gameForDifferentPlayer(int amountOfPlayers, GameCreator game) {
         boolean gameRun = true;
         int playerOne = 0;
@@ -500,7 +551,7 @@ public class GameController {
                 }
                 break;
 
-            case 3: //Still need to know how to handle one player losing.
+            case 3:
                 while (gameRun) {
                     if (game.getPlayers()[playerOne].isInGame()) { //PLAYER 1
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
@@ -539,7 +590,7 @@ public class GameController {
                 }
                 break;
 
-            case 4: //Still need to know how to handle one player losing.
+            case 4:
                 while (gameRun) {
                     if (game.getPlayers()[playerOne].isInGame()) { //PLAYER 1
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
@@ -592,8 +643,53 @@ public class GameController {
     }
 
     /**
+     * This will get triggered every time a player completes a full round.
+     *
+     * @param game GameCreator object
+     * @param player the player number
+     */
+    @Override
+    public void playerPassesThroughGO(GameCreator game, int player) {
+        System.out.println("You have completed one full round and you crossed go, you will be paid 10000");
+        System.out.println(game.getPlayers()[player].getName() + " your current balance is: " + game.getPlayers()[player].getMoney());
+        game.getPlayers()[player].payPlayer(10000);
+        System.out.println(game.getPlayers()[player].getName() + " your new balance is: " + game.getPlayers()[player].getMoney());
+    }
+
+    @Override
+    public void playerLandsOnChance(GameCreator game, int player) {
+        System.out.println(game.getPlayers()[player].getName() + " has landed on a chance card, lets roll the dioe to see what you will get");
+        int diceRoll = this.diceRoll();
+        System.out.println(game.getPlayers()[player].getName() + " has rolled a " + diceRoll);
+
+        switch (diceRoll) {
+            case 1://fall through
+            case 2:
+                System.out.println("Congratulations you have won 10000! this will be added to you account");
+                game.getPlayers()[player].payPlayer(10000);
+                break;
+            case 3://fall through
+            case 4:
+                System.out.println("Oh no! the bank is asking you to pay 5000 for taxes! 5000 will be charged from your account");
+                game.getPlayers()[player].chargePlayer(5000);
+                break;
+            case 5://fall through
+            case 6:
+                System.out.println("Well it seems that youre quite unlucky today! the police has just notified us that you were seen speeding, you will go to jail!");
+                game.getPlayers()[player].moveToJail(game.getLocations()[6]);
+
+        }
+    }
+    
+    public void saveGame(GameCreator game)
+    {
+        System.out.println("We will save the game to a text file");
+    }
+
+    /**
      * This method displays the instructions to the monopoly game.
      */
+    @Override
     public void instructions() {
         System.out.println("Welcome to Monopoly!");
         System.out.println("The rules are simple, the player with the most assets by round 15 wins, or if you all agree to end the game earlier, the player with the most money wins.");

@@ -152,9 +152,23 @@ public class Player implements PlayerInterface {
             this.setMoney(this.getMoney() - asset.getBoardPosition().cloneObject().getPrice());
         }
     }
+    
+    @Override
+    public void moveToJail(GlobalLocation location)
+    {
+        this.setJailCounter(0);
+        this.setJailState(true);
+        this.setCurrentLocation(location);
+    }
 
+    public void moveOutOfJail(GlobalLocation location){
+        this.setJailCounter(0);
+        this.setJailState(false);
+        this.setCurrentLocation(location);
+    }
+    
     @Override
     public String toString() {
-        return "Name: " + name + ", money: " + money + ", currentLocation: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset.toString();
+        return "Player: " + name + ", money: " + money + ", current location: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset + ", rounds: "+ rounds;
     }
 }
