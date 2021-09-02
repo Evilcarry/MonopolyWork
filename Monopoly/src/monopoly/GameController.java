@@ -5,8 +5,10 @@
  */
 package monopoly;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
@@ -34,14 +36,15 @@ public class GameController implements ActionInterface {
 
             if (userScan.hasNextInt()) {
                 userInput = userScan.nextInt();
-                if (userInput < 2 && userInput >= 0) {
+                if (userInput <= 2 && userInput >= 0) {
                     if (userInput == 0) {
                         runTillStop = false;
                     } else if (userInput == 1) {
                         int amountOfPlayers = this.startWithoutLoading();
                         this.gameForDifferentPlayer(amountOfPlayers, newGame);
                     } else if (userInput == 2) {
-                        //TODO: read file and load from here?
+                        int amountOfPlayers = this.startWithLoading();
+                        this.gameForDifferentPlayer(amountOfPlayers, newGame);
                     } else {
                         System.out.println("Something wrong apparently");
                     }
@@ -85,12 +88,30 @@ public class GameController implements ActionInterface {
         return numberOfPlayers;
     }
 
+    /**
+     * this method is to start the game without loading.
+     * @return amount of players in the game.
+     */
     public int startWithoutLoading() {
         this.instructions();//to display instructions on the game
         int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
         this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
         this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
         this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
+        this.newGame.createAssets(); //creates all the assets for each location.
+        return amountOfPlayers;
+    }
+
+    /**
+     * This method is to start the game from a saved file
+     * @return 
+     */
+    public int startWithLoading() {
+        this.instructions();//to display instructions on the game
+        int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
+        this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
+        this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
+        this.newGame.createPlayers(amountOfPlayers, this.loadPlayer(amountOfPlayers)); //Here we will create players from the save
         this.newGame.createAssets(); //creates all the assets for each location.
         return amountOfPlayers;
     }
@@ -684,8 +705,8 @@ public class GameController implements ActionInterface {
                 for (int k = 0; k < 24; k++) {
                     if (game.getPlayers()[player].getAsset()[k] != null) {
                         if (game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getLocationID() == game.getPlayers()[currentPlayer].getCurrentLocation().getLocationID()) {
-                            System.out.println("Oh no! "+ game.getPlayers()[currentPlayer].getName() + " has landed on the asset of "+ game.getPlayers()[player].getName());
-                            System.out.println(game.getPlayers()[currentPlayer].getName()+ "has to pay "+ game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice() +" to "+ game.getPlayers()[player].getName());
+                            System.out.println("Oh no! " + game.getPlayers()[currentPlayer].getName() + " has landed on the asset of " + game.getPlayers()[player].getName());
+                            System.out.println(game.getPlayers()[currentPlayer].getName() + "has to pay " + game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice() + " to " + game.getPlayers()[player].getName());
                             game.getPlayers()[currentPlayer].chargePlayer(game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice());
                             game.getPlayers()[player].payPlayer(game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice());
                         }
@@ -720,10 +741,16 @@ public class GameController implements ActionInterface {
         }
     }
 
+    /**
+     * This method saves all players.
+     *
+     * @param game
+     * @param amountOfPlayers
+     */
     public void savePlayer(GameCreator game, int amountOfPlayers) {
         for (int i = 0; i < amountOfPlayers; i++) {
             try {
-                String filename = "player" + i + ".txt";
+                String filename = "player" + i + ".ser";
                 FileOutputStream file = new FileOutputStream(filename);
                 ObjectOutputStream out = new ObjectOutputStream(file);
 
@@ -736,12 +763,39 @@ public class GameController implements ActionInterface {
     }
 
     /**
+     * This method loads the players and returns them in an array.
+     *
+     * @param amountOfPlayers
+     * @return array of Player with the size of amountOfPlayers
+     */
+    public Player[] loadPlayer(int amountOfPlayers) {
+        Player[] players = new Player[amountOfPlayers];
+
+        for (int i = 0; i < amountOfPlayers; i++) {
+            try {
+                String filename = "player" + i + ".ser";
+                FileInputStream file = new FileInputStream(filename);
+                ObjectInputStream in = new ObjectInputStream(file);
+
+                players[i] = (Player) in.readObject();
+
+            } catch (IOException e) {
+                System.out.println("IOException is caught");
+            } catch (ClassNotFoundException e) {
+                System.out.println("ClassNotFoundException is caught");
+            }
+        }
+
+        return players;
+    }
+
+    /**
      * This method displays the instructions to the monopoly game.
      */
     @Override
     public void instructions() {
         System.out.println("Welcome to Monopoly!");
-        System.out.println("The rules are simple, the player with the most assets by round 15 wins, or if you all agree to end the game earlier, the player with the most money wins.");
+        System.out.println("The rules are simple, the player that gets to round 10 first wins, or if you all agree to end the game earlie, no one wins, or until everyone runs out of money");
         System.out.println("Each player has to move across the 24 different locations");
         System.out.println("Each player gets given $200000 at the start of the game, a player can get more money by landing on a chance card, by owning a property and other players paying rent and also whenever they complete a round and go through the starting location 'GO'");
         System.out.println("A player can also sell an asset, only allowed to sell one asset per turn");

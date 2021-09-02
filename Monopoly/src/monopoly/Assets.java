@@ -44,7 +44,7 @@ public class Assets implements java.io.Serializable{
 
     @Override
     public String toString() {
-        return "Assets{" + "location=" + location + ", level=" + level + '}';
+        return "Assets:" + " " + location.getName() + ", level:" + level ;
     }
 
 }

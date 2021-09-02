@@ -20,6 +20,7 @@ public class GameCreator implements java.io.Serializable{
         this.players = new Player[numberOfPlayers];
         this.assets = new Assets[24];
     }
+    
 
     public void createAssets() {
         for (int i = 0; i < 24; i++) {
@@ -36,6 +37,17 @@ public class GameCreator implements java.io.Serializable{
     public void createPlayers(int numberOfPlayers, String playerName[]) {
         for (int i = 0; i < numberOfPlayers; i++) {
             this.players[i] = new Player(playerName[i], locations[0]);
+        }
+    }
+    /**
+     * This method loads players back up from a save
+     * @param numberOfPlayers
+     * @param player[] 
+     */
+    public void createPlayers(int numberOfPlayers, Player[] player)
+    {
+        for (int i = 0; i < numberOfPlayers; i++) {
+            this.players[i] = player[i];
         }
     }
 
