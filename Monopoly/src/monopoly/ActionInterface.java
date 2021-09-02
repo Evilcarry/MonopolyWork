@@ -23,7 +23,7 @@ public interface ActionInterface {
     public int diceRoll();
     public void playerEngagement();
     public void playerInJailAction(GameCreator game, int player);
-    public void playerTurn(GameCreator game, int player);
+    public void playerTurn(GameCreator game, int player, int amountOfPlayers);
     public void gameForDifferentPlayer(int amountOfPlayers, GameCreator game);
     public void playerPassesThroughGO(GameCreator game, int player);
     public void playerLandsOnChance(GameCreator game, int player);
