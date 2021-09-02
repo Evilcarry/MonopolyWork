@@ -17,6 +17,8 @@ public class Player implements PlayerInterface {
     private int jailCounter;
     private boolean jailState;
     private Assets[] asset;
+    private int rounds;
+    private boolean inGame;
 
     public Player(String name, GlobalLocation currentLocation) {
         this.money = 200000;
@@ -25,8 +27,26 @@ public class Player implements PlayerInterface {
         this.jailCounter = 0;
         this.jailState = false;
         this.asset = new Assets[24];
+        this.rounds = 0;
+        this.inGame = true;
     }
 
+    public boolean isInGame() {
+        return inGame;
+    }
+
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
+    }
+    
+    public int getRounds() {
+        return rounds;
+    }
+
+    public void setRounds(int rounds) {
+        this.rounds = rounds;
+    }
+    
     public Assets[] getAsset() {
         return asset;
     }

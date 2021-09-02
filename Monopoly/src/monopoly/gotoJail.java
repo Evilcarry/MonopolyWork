@@ -35,20 +35,6 @@ public class GotoJail extends GlobalLocation implements JailInterface{
     public void removeFromJail(Player player, GlobalLocation locations[]) {
         player.movePlayer(locations[this.getLocationID()+1]);
     }
-/*
-        if (player.isJailState())
-        {
-            if(player.getJailCounter() >= 3)
-            {
-                player.movePlayer(locations[this.getLocationID()+1]);
-            }
-            else if (player.getJailCounter() < 3)
-            {
-                System.out.println("Sorry the "+ player.getName() + " has to serve the jail time");
-            }
-        }
-    }   
-*/
 
     @Override
     public HousingLocation cloneObject() {

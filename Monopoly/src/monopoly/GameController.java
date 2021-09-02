@@ -34,8 +34,7 @@ public class GameController {
 
             if (userScan.hasNextInt()) {
                 userInput = userScan.nextInt();
-                if (userInput < 2 && userInput >= 0)
-                {
+                if (userInput < 2 && userInput >= 0) {
                     if (userInput == 0) {
                         runTillStop = false;
                     } else if (userInput == 1) {
@@ -44,10 +43,9 @@ public class GameController {
                         //TODO: read file and load from here?
                     } else {
                         System.out.println("Something wrong apparently");
-                    } 
+                    }
                 }
-            }
-            else{
+            } else {
                 System.out.println("something wrong apparently");
                 userScan.next();
             }
@@ -86,7 +84,7 @@ public class GameController {
     }
 
     /**
-     * This method allows the userRoll to set their name
+     * This method allows the userOption to set their name
      *
      * @param numberOfPlayers is the number of players that will be playing.
      * @return names.
@@ -104,7 +102,7 @@ public class GameController {
     }
 
     /**
-     * This is the buyMenu method, it will display a menu for the userRoll so
+     * This is the buyMenu method, it will display a menu for the userOption so
      * they can purchase assets.
      *
      * @param game which is a GameCreator object.
@@ -307,16 +305,16 @@ public class GameController {
     public int menuLoader(GameCreator game, int player, int userAnswer) {
         switch (userAnswer) {
             case 1:
-                return this.diceRoll();
+                return 1;
             case 2:
                 this.buyMenu(game, player);
-                break;
+                return 2;
             case 3:
                 this.sellMenu(game, player);
-                break;
+                return 2;
             case 4:
                 this.updgradeMenu(game, player);
-                break;
+                return 2;
         }
         return 0;
     }
@@ -333,6 +331,7 @@ public class GameController {
         int counter = game.getPlayers()[player].getCurrentLocation().getLocationID() + diceRoll;
         if (counter > 23) {
             counter = counter - 23;
+            game.getPlayers()[player].setRounds(game.getPlayers()[player].getRounds() + 1);
             game.getPlayers()[player].setCurrentLocation(game.getLocations()[counter]);
         } else {
             game.getPlayers()[player].setCurrentLocation(game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID() + diceRoll]);
@@ -350,138 +349,242 @@ public class GameController {
         return roll.randomNumGenerator();
     }
 
-    public void gameForDifferentPlayer(int playerNumber, GameCreator game) {
-        boolean gameRun = true;
+    public void playerEngagement() {
+        Scanner engagementScan = new Scanner(System.in);
 
-        switch (playerNumber) {
+        boolean trueTillRightInput = true;
+        while (trueTillRightInput) {
+            System.out.println("input a 0 to quit the game, any other number will roll your die");
+            if (engagementScan.hasNextInt()) {
+                int userInput = engagementScan.nextInt();
+
+                if (userInput == 0) {
+                    //TODO: QUIT GAME
+                } else {
+                    System.out.println("Rolling your die!");
+                    trueTillRightInput = false;
+                }
+            } else {
+                System.out.println("It appears you have entered the wrong input, please try again");
+                engagementScan.next();
+            }
+        }
+    }
+
+    /**
+     * This method will make it so if a player is in jail he only has the option
+     * to either roll or pay their way out.
+     *
+     * @param game
+     * @param playerNumber
+     */
+    public void playerInJailAction(GameCreator game, int player) {
+        System.out.println("It appears you've landed in jail");
+        System.out.println("you are currently locked in jail for 3 turns, if you roll a 6 you will be released from jail, or you can buy your way out for $10000");
+        System.out.println("you currently have: " + game.getPlayers()[player].getMoney() + ". Remember that if you go negative you will lose the game");
+        System.out.println("Press 1 to roll the die or press 2 to pay your way out.");
+
+        Scanner jailScan = new Scanner(System.in);
+        boolean trueTillRightInput = true;
+        while (trueTillRightInput) {
+            if (jailScan.hasNextInt()) {
+                int userInput = jailScan.nextInt();
+                if (userInput == 1) {
+                    int diceRoll = this.diceRoll();
+                    System.out.println("you have rolled a " + diceRoll);
+                    if (diceRoll == 6) {
+                        System.out.println("Congratulations, you are out of jail");
+                        game.getPlayers()[player].setJailState(false);
+                        game.getPlayers()[player].setJailCounter(0);
+                        trueTillRightInput = false;
+                    } else {
+                        game.getPlayers()[player].setJailCounter(game.getPlayers()[player].getJailCounter() + 1);
+                        if (game.getPlayers()[player].getJailCounter() == 3) {
+                            System.out.println("You are out of jail!, in your next turn you will be able to play again");
+                            game.getPlayers()[player].setJailState(false);
+                            game.getPlayers()[player].setJailCounter(0);
+                            trueTillRightInput = false;
+                        } else {
+                            System.out.println("unfortunately you didnt roll a 6, you are still in jail for " + (3 - game.getPlayers()[player].getJailCounter()) + " more turns");
+                            trueTillRightInput = false;
+                        }
+                    }
+                } else if (userInput == 2) {
+                    game.getPlayers()[player].chargePlayer(10000);
+                    if (game.getPlayers()[player].getMoney() > 0) {
+                        System.out.println("You have successfully purchased your way out of jail");
+                        game.getPlayers()[player].setJailState(false);
+                        game.getPlayers()[player].setJailCounter(0);
+                        trueTillRightInput = false;
+                    } else {
+                        System.out.println("It seems that you tried to purchase your way out of jail but you can't afford it");
+                        System.out.println("Unfortunately you are now in the negative.");
+                        trueTillRightInput = false;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * This is in charge of running the turn of each player
+     * @param game GameCrator object
+     * @param player integer stating which player
+     */
+    public void playerTurn(GameCreator game, int player) {
+        if (game.getPlayers()[player].isJailState()) {
+            this.playerInJailAction(game, player);
+        } else {
+            int userOption = this.menuLoader(game, player, this.playerMessage(game, player));
+            if (userOption == 0) {
+                System.out.println("Since you skipped your turn, the die will roll");
+                this.playerEngagement();
+                int diceRoll = this.diceRoll();
+                this.movePlayerAround(game, player, diceRoll);
+                if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
+                    if (!game.getPlayers()[player].isJailState()) {
+                        game.getPlayers()[player].setJailState(true);
+                    }
+                }
+            } else if (userOption == 2) {
+                System.out.println("Now you can roll you die!");
+                this.playerEngagement();
+                int diceRoll = this.diceRoll();
+                this.movePlayerAround(game, player, diceRoll);
+            } else if (userOption == 1) {
+                this.playerEngagement();
+                int diceRoll = this.diceRoll();
+                this.movePlayerAround(game, player, diceRoll);
+            }
+        }
+
+    }
+
+    /**
+     * This will run a different game depending on the number of players.
+     * @param amountOfPlayers
+     * @param game GameCreator
+     */
+    public void gameForDifferentPlayer(int amountOfPlayers, GameCreator game) {
+        boolean gameRun = true;
+        int playerOne = 0;
+        int playerTwo = 1;
+        int playerThree = 2;
+        int playerFour = 3;
+
+        switch (amountOfPlayers) {
             case 2:
                 while (gameRun) {
-                    if (game.getPlayers()[0].getMoney() > 0) {
-                        int userRoll = this.menuLoader(game, 0, this.playerMessage(game, 0));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 0, diceRoll);
+                    if (game.getPlayers()[playerOne].isInGame()) {
+                        if (game.getPlayers()[playerOne].getMoney() > 0) {
+                            this.playerTurn(game, playerOne);
                         } else {
-                            this.movePlayerAround(game, 0, userRoll);
+                            System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
+                            System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulatios");
+                            game.getPlayers()[playerOne].setInGame(false);
+                            game.getPlayers()[playerTwo].setInGame(false);
+                            gameRun = false;
                         }
-                    } else if (game.getPlayers()[0].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[0].getName() + " has ran out of money! you've lost the game buddy.");
-                        System.out.println(game.getPlayers()[1].getName() + " has won the game! Congratulatios");
-                        gameRun = false;
                     }
-                    if (game.getPlayers()[1].getMoney() > 0) {
-                        int userRoll = this.menuLoader(game, 1, this.playerMessage(game, 1));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 1, diceRoll);
+                    if (game.getPlayers()[playerTwo].isInGame()) {
+                        if (game.getPlayers()[playerTwo].getMoney() > 0) {
+                            this.playerTurn(game, playerTwo);
                         } else {
-                            this.movePlayerAround(game, 1, userRoll);
+                            System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
+                            System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulatios");
+                            game.getPlayers()[playerOne].setInGame(false);
+                            game.getPlayers()[playerTwo].setInGame(false);
+                            gameRun = false;
                         }
-                    } else if (game.getPlayers()[1].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[1].getName() + " has ran out of money! you've lost the game buddy.");
-                        System.out.println(game.getPlayers()[0].getName() + " has won the game! Congratulatios");
-                        gameRun = false;
                     }
                 }
                 break;
+
             case 3: //Still need to know how to handle one player losing.
                 while (gameRun) {
-                    if (game.getPlayers()[0].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 0, this.playerMessage(game, 0));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 0, diceRoll);
+                    if (game.getPlayers()[playerOne].isInGame()) { //PLAYER 1
+                        if (game.getPlayers()[playerOne].getMoney() > 0) {
+                            this.playerTurn(game, playerOne);
                         } else {
-                            this.movePlayerAround(game, 0, userRoll);
+                            System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerOne].setInGame(false);
                         }
-                    } else if (game.getPlayers()[0].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[0].getName() + " has ran out of money! you've lost the game buddy.");
                     }
-                    if (game.getPlayers()[1].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 1, this.playerMessage(game, 1));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 1, diceRoll);
+                    if (game.getPlayers()[playerTwo].isInGame()) { //PLAYER 2
+                        if (game.getPlayers()[playerTwo].getMoney() > 0) {
+                            this.playerTurn(game, playerTwo);
                         } else {
-                            this.movePlayerAround(game, 1, userRoll);
+                            System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerTwo].setInGame(false);
                         }
-                    } else if (game.getPlayers()[1].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[1].getName() + " has ran out of money! you've lost the game buddy.");
                     }
-                    if (game.getPlayers()[2].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 2, this.playerMessage(game, 2));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 2, diceRoll);
+                    if (game.getPlayers()[playerThree].isInGame()) { //PLAYER 3
+                        if (game.getPlayers()[playerThree].getMoney() > 0) {
+                            this.playerTurn(game, playerThree);
                         } else {
-                            this.movePlayerAround(game, 2, userRoll);
+                            System.out.println(game.getPlayers()[playerThree].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerThree].setInGame(false);
                         }
-                    } else if (game.getPlayers()[2].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[2].getName() + " has ran out of money! you've lost the game buddy.");
+                    }
+                    if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerTwo].isInGame()) {
+                        System.out.println(game.getPlayers()[playerThree].getName() + " has won the game! Congratulations");
+                        gameRun = false;
+                    } else if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerThree].isInGame()) {
+                        System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulations");
+                        gameRun = false;
+                    } else if (!game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerThree].isInGame()) {
+                        System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulations");
+                        gameRun = false;
                     }
                 }
                 break;
+
             case 4: //Still need to know how to handle one player losing.
                 while (gameRun) {
-                    if (game.getPlayers()[0].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 0, this.playerMessage(game, 0));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 0, diceRoll);
+                    if (game.getPlayers()[playerOne].isInGame()) { //PLAYER 1
+                        if (game.getPlayers()[playerOne].getMoney() > 0) {
+                            this.playerTurn(game, playerOne);
                         } else {
-                            this.movePlayerAround(game, 0, userRoll);
+                            System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerOne].setInGame(false);
                         }
-                    } else if (game.getPlayers()[0].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[0].getName() + " has ran out of money! you've lost the game buddy.");
                     }
-                    if (game.getPlayers()[1].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 1, this.playerMessage(game, 1));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 1, diceRoll);
+                    if (game.getPlayers()[playerTwo].isInGame()) { //PLAYER 2
+                        if (game.getPlayers()[playerTwo].getMoney() > 0) {
+                            this.playerTurn(game, playerTwo);
                         } else {
-                            this.movePlayerAround(game, 1, userRoll);
+                            System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerTwo].setInGame(false);
                         }
-                    } else if (game.getPlayers()[1].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[1].getName() + " has ran out of money! you've lost the game buddy.");
                     }
-                    if (game.getPlayers()[2].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 2, this.playerMessage(game, 2));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 2, diceRoll);
+                    if (game.getPlayers()[playerThree].isInGame()) { //PLAYER 3
+                        if (game.getPlayers()[playerThree].getMoney() > 0) {
+                            this.playerTurn(game, playerThree);
                         } else {
-                            this.movePlayerAround(game, 2, userRoll);
+                            System.out.println(game.getPlayers()[playerThree].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerThree].setInGame(false);
                         }
-                    } else if (game.getPlayers()[2].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[2].getName() + " has ran out of money! you've lost the game buddy.");
                     }
-                    if (game.getPlayers()[3].getMoney() > 0) {
-                        System.out.println("---------------------------------------------------------------------------------------------");
-                        int userRoll = this.menuLoader(game, 3, this.playerMessage(game, 3));
-                        if (userRoll == 0) {
-                            System.out.println("Since you skipped your turn, the die will roll");
-                            int diceRoll = this.diceRoll();
-                            this.movePlayerAround(game, 3, diceRoll);
+                    if (game.getPlayers()[playerFour].isInGame()) { //PLAYER 4
+                        if (game.getPlayers()[playerFour].getMoney() > 0) {
+                            this.playerTurn(game, playerFour);
                         } else {
-                            this.movePlayerAround(game, 3, userRoll);
+                            System.out.println(game.getPlayers()[playerFour].getName() + " has ran out of money! you've lost the game buddy.");
+                            game.getPlayers()[playerFour].setInGame(false);
                         }
-                    } else if (game.getPlayers()[3].getMoney() < 0) {
-                        System.out.println(game.getPlayers()[3].getName() + " has ran out of money! you've lost the game buddy.");
+                    }
+                    if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerThree].isInGame()) {
+                        System.out.println(game.getPlayers()[playerFour].getName() + " has won the game! Congratulations");
+                        gameRun = false;
+                    } else if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerFour].isInGame()) {
+                        System.out.println(game.getPlayers()[playerThree].getName() + " has won the game! Congratulations");
+                        gameRun = false;
+                    } else if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerThree].isInGame() && !game.getPlayers()[playerFour].isInGame()) {
+                        System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulations");
+                        gameRun = false;
+                    } else if (!game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerThree].isInGame() && !game.getPlayers()[playerFour].isInGame()) {
+                        System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulations");
+                        gameRun = false;
                     }
                 }
                 break;
@@ -495,7 +598,7 @@ public class GameController {
         System.out.println("Welcome to Monopoly!");
         System.out.println("The rules are simple, the player with the most assets by round 15 wins, or if you all agree to end the game earlier, the player with the most money wins.");
         System.out.println("Each player has to move across the 24 different locations");
-        System.out.println("Each player gets given $20000 at the start of the game, a player can get more money by landing on a chance card, by owning a property and other players paying rent and also whenever they complete a round and go through the starting location 'GO'");
+        System.out.println("Each player gets given $200000 at the start of the game, a player can get more money by landing on a chance card, by owning a property and other players paying rent and also whenever they complete a round and go through the starting location 'GO'");
         System.out.println("A player can also sell an asset, only allowed to sell one asset per turn");
         System.out.println("Each player can purchase the location they landed on but they must have the necessary funds to purchase it, be careful! if you run out of money you instantly lose the game");
         System.out.println("If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison");
