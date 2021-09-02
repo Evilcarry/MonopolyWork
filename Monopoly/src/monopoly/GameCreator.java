@@ -9,7 +9,7 @@ package monopoly;
  *
  * @author benjh
  */
-public class GameCreator {
+public class GameCreator implements java.io.Serializable{
 
     private GlobalLocation[] locations;
     private Player[] players;

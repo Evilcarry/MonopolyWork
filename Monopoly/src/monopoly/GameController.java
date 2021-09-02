@@ -5,6 +5,9 @@
  */
 package monopoly;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
 /**
@@ -20,15 +23,8 @@ public class GameController implements ActionInterface {
      */
     @Override
     public void gameStart() {
-        this.instructions();//to display instructions on the game
-        int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
-        this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
-        newGame.createLocations(); //creates all the locations, possibly going to read them off a file
-        newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
-        newGame.createAssets(); //creates all the assets for each location.
-
         int userInput;
-        boolean runTillStop = true;
+        boolean runTillStop = true; 
         Scanner userScan = new Scanner(System.in);
 
         while (runTillStop) {
@@ -42,6 +38,7 @@ public class GameController implements ActionInterface {
                     if (userInput == 0) {
                         runTillStop = false;
                     } else if (userInput == 1) {
+                        int amountOfPlayers = this.startWithoutLoading();
                         this.gameForDifferentPlayer(amountOfPlayers, newGame);
                     } else if (userInput == 2) {
                         //TODO: read file and load from here?
@@ -86,6 +83,16 @@ public class GameController implements ActionInterface {
             }
         }
         return numberOfPlayers;
+    }
+
+    public int startWithoutLoading() {
+        this.instructions();//to display instructions on the game
+        int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
+        this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
+        this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
+        this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
+        this.newGame.createAssets(); //creates all the assets for each location.
+        return amountOfPlayers;
     }
 
     /**
@@ -466,6 +473,7 @@ public class GameController implements ActionInterface {
             this.playerInJailAction(game, player);
         } else {
             if (game.getPlayers()[player].getRounds() >= 1) {
+                this.savePlayer(game, 2);
                 this.playerPassesThroughGO(game, player);
             } else if (((game.getPlayers()[player].getCurrentLocation().getLocationID() % 3) == 0) && !game.getPlayers()[player].isJailState() && (game.getPlayers()[player].getCurrentLocation().getLocationID() == 0)) {
                 this.playerLandsOnChance(game, player);
@@ -680,10 +688,20 @@ public class GameController implements ActionInterface {
 
         }
     }
-    
-    public void saveGame(GameCreator game)
-    {
-        System.out.println("We will save the game to a text file");
+
+    public void savePlayer(GameCreator game, int amountOfPlayers) {
+        for (int i = 0; i < amountOfPlayers; i++) {
+            try {
+                String filename = "player"+i+".txt";
+                FileOutputStream file = new FileOutputStream(filename);
+                ObjectOutputStream out = new ObjectOutputStream(file);
+
+                out.writeObject(game.getPlayers()[i]);
+
+            } catch (IOException ex) {
+                System.out.println("IOException is caught");
+            }
+        }
     }
 
     /**
