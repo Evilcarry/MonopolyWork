@@ -19,6 +19,7 @@ public class Player implements PlayerInterface, java.io.Serializable {
     private Assets[] asset;
     private int rounds;
     private boolean inGame;
+    private boolean paidThisRound;
     
     public Player(String name, GlobalLocation currentLocation) {
         this.money = 200000;
@@ -29,6 +30,15 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.asset = new Assets[24];
         this.rounds = 0;
         this.inGame = true;
+        this.paidThisRound = false;
+    }
+
+    public boolean isPaidThisRound() {
+        return paidThisRound;
+    }
+
+    public void setPaidThisRound(boolean paidThisRound) {
+        this.paidThisRound = paidThisRound;
     }
     
     public boolean isInGame() {

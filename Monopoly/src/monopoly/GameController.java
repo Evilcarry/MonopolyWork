@@ -352,6 +352,7 @@ public class GameController implements ActionInterface {
             counter = counter - 23;
             game.getPlayers()[player].setRounds(game.getPlayers()[player].getRounds() + 1);
             game.getPlayers()[player].movePlayer(game.getLocations()[counter]);
+            game.getPlayers()[player].setPaidThisRound(false);
         } else {
             game.getPlayers()[player].movePlayer(game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID() + diceRoll]);
         }
@@ -419,8 +420,10 @@ public class GameController implements ActionInterface {
                         System.out.println("Congratulations, you are out of jail");
                         if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
                             game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
+                            trueTillRightInput = false;
                         } else {
                             game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
+                            trueTillRightInput = false;
                         }
                     } else {
                         game.getPlayers()[player].setJailCounter(game.getPlayers()[player].getJailCounter() + 1);
@@ -428,8 +431,10 @@ public class GameController implements ActionInterface {
                             System.out.println("You are out of jail!, in your next turn you will be able to play again");
                             if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
                                 game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
+                                trueTillRightInput = false;
                             } else {
                                 game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
+                                trueTillRightInput = false;
                             }
                         } else {
                             System.out.println("unfortunately you didnt roll a 6, you are still in jail for " + (3 - game.getPlayers()[player].getJailCounter()) + " more turns");
@@ -442,8 +447,10 @@ public class GameController implements ActionInterface {
                         System.out.println("You have successfully purchased your way out of jail");
                         if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
                             game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
+                            trueTillRightInput = false;
                         } else {
                             game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
+                            trueTillRightInput = false;
                         }
                     } else {
                         System.out.println("It seems that you tried to purchase your way out of jail but you can't afford it");
@@ -473,8 +480,8 @@ public class GameController implements ActionInterface {
         if (game.getPlayers()[player].isJailState()) {
             this.playerInJailAction(game, player);
         } else {
-            if (game.getPlayers()[player].getRounds() >= 1) {
-                //this.savePlayer(game, amountOfPlayers);//---------------------------------------------------------------------------------------------------------------------------------------------------------------
+            if (game.getPlayers()[player].getRounds() >= 1 && !game.getPlayers()[player].isPaidThisRound()) {
+                game.getPlayers()[player].setPaidThisRound(true);
                 this.playerPassesThroughGO(game, player);
             } else if ((game.getPlayers()[player].getCurrentLocation().getLocationID() % 3) == 0 && !game.getPlayers()[player].isJailState() && game.getPlayers()[player].getCurrentLocation().getLocationID() != 0) {
                 this.playerLandsOnChance(game, player);
