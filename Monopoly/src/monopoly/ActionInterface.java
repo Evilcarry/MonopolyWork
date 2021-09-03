@@ -10,11 +10,7 @@ public interface ActionInterface {
     public void gameStart();
     public int setPlayerNumber();
     public String[] setPlayerName(int numberOfPlayers);
-    //public void buyMenu(GameCreator game, int player);
-    //public void sellMenu(GameCreator game, int player);
-    //public void updgradeMenu(GameCreator game, int player);
     public int playerMessage(GameCreator game, int playerNum);
-    //public int menuLoader(GameCreator game, int player, int userAnswer);
     public void movePlayerAround(GameCreator game, int player, int diceRoll);
     public int diceRoll();
     public void playerEngagement();
