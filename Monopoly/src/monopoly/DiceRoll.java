@@ -17,8 +17,8 @@ public class DiceRoll {
     }
 
     /**
-     * This method rolls a die
-     *
+     * This method rolls a die with 6 being the max number.
+     * It also makes the user wait for 1.5 second
      * @return the random number generated.
      */
     public int diceRoll() {

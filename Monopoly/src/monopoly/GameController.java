@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 /**
  * Project ID: 10 - Monopoly
+ *
  * @author Benjamin Andres Fuentes Cavieres - 20104709
  * @author Sean Simpkins - 20105546
  */
@@ -16,7 +17,8 @@ public class GameController implements ActionInterface {
     private GameSavingAndLoading saveLoad;
 
     /**
-     * This method starts the game
+     * This method starts the game, it offers the option of quitting starting a
+     * new game or loading a game from a save.
      */
     @Override
     public void gameStart() {
@@ -139,7 +141,7 @@ public class GameController implements ActionInterface {
      * This method allows the userOption to set their name
      *
      * @param numberOfPlayers is the number of players that will be playing.
-     * @return names.
+     * @return an array of names.
      */
     @Override
     public String[] setPlayerName(int numberOfPlayers) {
@@ -156,7 +158,8 @@ public class GameController implements ActionInterface {
     }
 
     /**
-     * This method moves a player across the board.
+     * This method moves a player across the board. It also makes sure that when
+     * a player reaches the last place it restarts at the first spot.
      *
      * @param game
      * @param player
@@ -194,6 +197,11 @@ public class GameController implements ActionInterface {
      */
     @Override
     public void gameTurn(GameCreator game, int player, int amountOfPlayers) {
+        for (int i = 0; i < amountOfPlayers; i++) {
+            if (game.getPlayers()[i].getRounds() == 10) {
+                this.gameWinner(game, i);
+            }
+        }
         if (game.getPlayers()[player].isJailState()) {
             playerForGameActions.playerInJailAction(game, player);
         } else {
@@ -225,7 +233,7 @@ public class GameController implements ActionInterface {
                     }
                 } else if (userOption == 1) {
                     this.saveLoad.savePlayer(game, amountOfPlayers);
-                    playerForGameActions.playerEngagement();
+                    //playerForGameActions.playerEngagement();
                     int diceRoll = this.roll.diceRoll();
                     this.movePlayerAround(game, player, diceRoll);
                     playerForGameActions.playerPaysRent(game, amountOfPlayers, player);
@@ -367,6 +375,7 @@ public class GameController implements ActionInterface {
         System.out.println("Each player can purchase the location they landed on but they must have the necessary funds to purchase it, be careful! if you run out of money you instantly lose the game");
         System.out.println("If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison");
         System.out.println("Chance cards can be good and dangerous so be careful.");
+        System.out.println("Game will automatically save after each dice roll.");
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 

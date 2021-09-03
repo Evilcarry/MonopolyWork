@@ -27,6 +27,10 @@ public class Assets implements java.io.Serializable{
         return level;
     }
 
+    /**
+     * This method is to set the level of the asset.
+     * If someone tries to upgrade it to more than 4 it will reject it.
+     */
     public void setLevel() {
         if (this.getLevel() > 4) {
             System.out.println("Trying to upgrade to higher than level 4?");

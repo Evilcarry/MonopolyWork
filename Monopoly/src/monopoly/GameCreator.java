@@ -17,6 +17,9 @@ public class GameCreator implements java.io.Serializable {
         this.assets = new Assets[24];
     }
 
+    /**
+     * This method is in charge of creating a list of assets.
+     */
     public void createAssets() {
         for (int i = 0; i < 24; i++) {
             this.assets[i] = new Assets(this.locations[i], 0);
@@ -47,6 +50,9 @@ public class GameCreator implements java.io.Serializable {
         }
     }
 
+    /**
+     * This method is to initialize hard coded locations.
+     */
     public void createLocations() {
         this.locations[0] = new GoLocation("Go", 0);
         this.locations[1] = new HousingLocation("Bay of Islands", 1, 10000, 0, 5000, 5000);
