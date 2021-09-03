@@ -1,8 +1,9 @@
 package monopoly;
 
 /**
- *
- * @author benjh
+ * Project ID: 10 - Monopoly
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public abstract class GlobalLocation implements java.io.Serializable{
     private String name;
