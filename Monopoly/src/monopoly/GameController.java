@@ -1,10 +1,5 @@
 package monopoly;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Scanner;
 
 /**
@@ -17,6 +12,9 @@ public class GameController implements ActionInterface {
 
     private GameCreator newGame;
     private MenuForGame menu;
+    private PlayerForGameActions playerForGameActions;
+    private DiceRoll roll;
+    private GameSavingAndLoading saveLoad;
 
     /**
      * This method starts the game
@@ -95,6 +93,7 @@ public class GameController implements ActionInterface {
      */
     @Override
     public int startWithoutLoading() {
+        this.roll = new DiceRoll();
         this.instructions();//to display instructions on the game
         int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
         this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
@@ -102,6 +101,8 @@ public class GameController implements ActionInterface {
         this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
         this.newGame.createAssets(); //creates all the assets for each location.
         this.menu = new MenuForGame(this.newGame);
+        this.playerForGameActions = new PlayerForGameActions(this.newGame);
+        this.saveLoad = new GameSavingAndLoading(this.newGame, amountOfPlayers);
         return amountOfPlayers;
     }
 
@@ -112,17 +113,25 @@ public class GameController implements ActionInterface {
      */
     @Override
     public int startWithLoading() {
+        this.roll = new DiceRoll();
         this.instructions();//to display instructions on the game
         int amountOfPlayers = this.setPlayerNumber(); // sets the number of players
         this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
         this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
-        this.newGame.createPlayers(amountOfPlayers, this.loadPlayer(amountOfPlayers)); //Here we will create players from the save
+        try {
+            this.newGame.createPlayers(amountOfPlayers, this.saveLoad.loadPlayer(amountOfPlayers)); //Here we will create players from the save
+            System.out.println("Just to remind everyone, of their stats");
+            for (int i = 0; i < amountOfPlayers; i++) {
+                System.out.println(this.newGame.getPlayers()[i]);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("It seems that your save had less players than the current amount");
+            System.out.println("The game will start without loading the save.");
+            this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers));
+        }
         this.newGame.createAssets(); //creates all the assets for each location.
         this.menu = new MenuForGame(this.newGame);
-        System.out.println("Just to remind everyone, of their stats");
-        for (int i = 0; i < amountOfPlayers; i++) {
-            System.out.println(this.newGame.getPlayers()[i]);
-        }
+        this.playerForGameActions = new PlayerForGameActions(this.newGame);
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         return amountOfPlayers;
     }
@@ -145,38 +154,6 @@ public class GameController implements ActionInterface {
         }
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         return names;
-    }
-
-    /**
-     * This method asks the player for an input from 1 to 4 to see what they
-     * want to do if the player inputs 0 the program skips the user turn
-     *
-     * @param game
-     * @param playerNum
-     * @return the number the user input.
-     */
-    @Override
-    public int playerMessage(GameCreator game, int playerNum) {
-        Scanner userScan = new Scanner(System.in);
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println(game.getPlayers()[playerNum].getName() + " you are currently standing in " + game.getPlayers()[playerNum].getCurrentLocation().getName());
-        System.out.println(game.getPlayers()[playerNum].getName() + " here are your options, Press 1 to roll your die, press 2 for the buy meny, press 3 for the sell menu, press 4 for the upgrade menu, to skip your turn press 0");
-        System.out.println("If you access a menu, you will lose the chance to access a different menu.");
-        boolean TrueTillRightInput = true;
-        int userInput = 0;
-        while (TrueTillRightInput) {
-            if (userScan.hasNextInt()) {
-                userInput = userScan.nextInt();
-                if (userInput > 4 && userInput < 0) {
-                    System.out.println("It appears you've entered the wrong input!");
-                    System.out.println("Please try again");
-                    userScan.next();
-                } else {
-                    TrueTillRightInput = false;
-                }
-            }
-        }
-        return userInput;
     }
 
     /**
@@ -203,128 +180,10 @@ public class GameController implements ActionInterface {
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
     }
 
-    /**
-     * This method rolls a die
-     *
-     * @return the random number generated.
-     */
-    @Override
-    public int diceRoll() {
-        RandomNum roll = new RandomNum();
-        return roll.randomNumGenerator();
-    }
-
-    /**
-     * This is just to engage the player.
-     */
-    @Override
-    public void playerEngagement() {
-        Scanner engagementScan = new Scanner(System.in);
-
-        boolean trueTillRightInput = true;
-        while (trueTillRightInput) {
-            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("input a 0 to quit the game, any other number will roll your die");
-            if (engagementScan.hasNextInt()) {
-                int userInput = engagementScan.nextInt();
-
-                if (userInput == 0) {
-                    this.exitGame();
-                } else {
-                    System.out.println("Rolling your die!");
-                    trueTillRightInput = false;
-                }
-            } else {
-                System.out.println("It appears you have entered the wrong input, please try again");
-                engagementScan.next();
-            }
-        }
-    }
-
     public void exitGame() {
         System.out.println("---------------------------------------------------------------------GOOD-BYE!------------------------------------------------------------------------------------------------");
         System.out.println("Thank you for playing the game. It will automatically save");
         System.exit(0);
-    }
-
-    /**
-     * This method will make it so if a player is in jail he only has the option
-     * to either roll or pay their way out.
-     *
-     * @param game
-     * @param player
-     */
-    @Override
-    public void playerInJailAction(GameCreator game, int player) {
-        System.out.println("--------------------------------------------------------------------------JAIL------------------------------------------------------------------------------------------------");
-        System.out.println(game.getPlayers()[player].getName() + " it appears you've landed in jail");
-        System.out.println("you are currently locked in jail for " + (3 - game.getPlayers()[player].getJailCounter()) + " more turns, if you roll a 6 you will be released from jail, or you can buy your way out for $10000");
-        System.out.println("you currently have: " + game.getPlayers()[player].getMoney() + ". Remember that if you go negative you will lose the game");
-        System.out.println("Press 1 to roll the die or press 2 to pay your way out.");
-
-        Scanner jailScan = new Scanner(System.in);
-        boolean trueTillRightInput = true;
-        while (trueTillRightInput) {
-            if (jailScan.hasNextInt()) {
-                int userInput = jailScan.nextInt();
-                if (userInput == 1) {
-                    int diceRoll = this.diceRoll();
-                    System.out.println("you have rolled a " + diceRoll);
-                    if (diceRoll == 6) {
-                        System.out.println("Congratulations, you are out of jail");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
-                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
-                            trueTillRightInput = false;
-                        } else {
-                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
-                            trueTillRightInput = false;
-                        }
-                    } else {
-                        game.getPlayers()[player].setJailCounter(game.getPlayers()[player].getJailCounter() + 1);
-                        if (game.getPlayers()[player].getJailCounter() == 3) {
-                            System.out.println("You are out of jail!, in your next turn you will be able to play again");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
-                                game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
-                                trueTillRightInput = false;
-                            } else {
-                                game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
-                                trueTillRightInput = false;
-                            }
-                        } else {
-                            System.out.println("unfortunately you didnt roll a 6, you are still in jail for " + (3 - game.getPlayers()[player].getJailCounter()) + " more turns");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            trueTillRightInput = false;
-                        }
-                    }
-                } else if (userInput == 2) {
-                    game.getPlayers()[player].chargePlayer(10000);
-                    if (game.getPlayers()[player].getMoney() > 0) {
-                        System.out.println("You have successfully purchased your way out of jail");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
-                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
-                            trueTillRightInput = false;
-                        } else {
-                            game.getPlayers()[player].moveOutOfJail(game.getLocations()[12]);
-                            trueTillRightInput = false;
-                        }
-                    } else {
-                        System.out.println("It seems that you tried to purchase your way out of jail but you can't afford it");
-                        System.out.println("Unfortunately you are now in the negative.");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        trueTillRightInput = false;
-                    }
-                } else {
-                    System.out.println("It apears you have entered the wrong input! please try again");
-                    jailScan.next();
-                }
-            } else {
-                System.out.println("It apears you have entered the wrong input! please try again");
-                jailScan.next();
-            }
-        }
     }
 
     /**
@@ -335,28 +194,28 @@ public class GameController implements ActionInterface {
      * @param amountOfPlayers
      */
     @Override
-    public void playerTurn(GameCreator game, int player, int amountOfPlayers) {
+    public void gameTurn(GameCreator game, int player, int amountOfPlayers) {
         if (game.getPlayers()[player].isJailState()) {
-            this.playerInJailAction(game, player);
+            playerForGameActions.playerInJailAction(game, player);
         } else {
             if (game.getPlayers()[player].getRounds() >= 1 && !game.getPlayers()[player].isPaidThisRound()) {
                 game.getPlayers()[player].setPaidThisRound(true);
-                this.playerPassesThroughGO(game, player);
+                playerForGameActions.playerPassesThroughGO(game, player);
             }
             boolean playerMove = false;
             if ((game.getPlayers()[player].getCurrentLocation().getLocationID() % 3) == 0 && !game.getPlayers()[player].isJailState() && game.getPlayers()[player].getCurrentLocation().getLocationID() != 0) {
-                playerMove = this.playerLandsOnChance(game, player);
+                playerMove = playerForGameActions.playerLandsOnChance(game, player);
             }
 
             if (!playerMove) {
-                int userOption = this.menu.menuLoader(game, player, this.playerMessage(game, player));
+                int userOption = this.menu.menuLoader(game, player, playerForGameActions.playerMessage(game, player));
                 if (userOption == 0) {
                     System.out.println("Since you skipped your turn, the die will roll");
-                    this.savePlayer(game, amountOfPlayers);
-                    this.playerEngagement();
-                    int diceRoll = this.diceRoll();
+                    this.saveLoad.savePlayer(game, amountOfPlayers);
+                    playerForGameActions.playerEngagement();
+                    int diceRoll = this.roll.diceRoll();
                     this.movePlayerAround(game, player, diceRoll);
-                    this.playerPaysRent(game, amountOfPlayers, player);
+                    playerForGameActions.playerPaysRent(game, amountOfPlayers, player);
                     if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                         if (!game.getPlayers()[player].isJailState()) {
                             game.getPlayers()[player].setJailState(true);
@@ -365,11 +224,11 @@ public class GameController implements ActionInterface {
                     }
                 } else if (userOption == 2) {
                     System.out.println("Now you can roll you die!");
-                    this.savePlayer(game, amountOfPlayers);
-                    this.playerEngagement();
-                    int diceRoll = this.diceRoll();
+                    this.saveLoad.savePlayer(game, amountOfPlayers);
+                    playerForGameActions.playerEngagement();
+                    int diceRoll = this.roll.diceRoll();
                     this.movePlayerAround(game, player, diceRoll);
-                    this.playerPaysRent(game, amountOfPlayers, player);
+                    playerForGameActions.playerPaysRent(game, amountOfPlayers, player);
                     if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                         if (!game.getPlayers()[player].isJailState()) {
                             game.getPlayers()[player].setJailState(true);
@@ -377,11 +236,11 @@ public class GameController implements ActionInterface {
                         }
                     }
                 } else if (userOption == 1) {
-                    this.savePlayer(game, amountOfPlayers);
-                    this.playerEngagement();
-                    int diceRoll = this.diceRoll();
+                    this.saveLoad.savePlayer(game, amountOfPlayers);
+                    playerForGameActions.playerEngagement();
+                    int diceRoll = this.roll.diceRoll();
                     this.movePlayerAround(game, player, diceRoll);
-                    this.playerPaysRent(game, amountOfPlayers, player);
+                    playerForGameActions.playerPaysRent(game, amountOfPlayers, player);
                     if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                         if (!game.getPlayers()[player].isJailState()) {
                             game.getPlayers()[player].setJailState(true);
@@ -413,7 +272,7 @@ public class GameController implements ActionInterface {
                 while (gameRun) {
                     if (game.getPlayers()[playerOne].isInGame()) {
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
-                            this.playerTurn(game, playerOne, amountOfPlayers);
+                            this.gameTurn(game, playerOne, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulatios");
@@ -425,7 +284,7 @@ public class GameController implements ActionInterface {
                     }
                     if (game.getPlayers()[playerTwo].isInGame()) {
                         if (game.getPlayers()[playerTwo].getMoney() > 0) {
-                            this.playerTurn(game, playerTwo, amountOfPlayers);
+                            this.gameTurn(game, playerTwo, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulatios");
@@ -442,7 +301,7 @@ public class GameController implements ActionInterface {
                 while (gameRun) {
                     if (game.getPlayers()[playerOne].isInGame()) { //PLAYER 1
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
-                            this.playerTurn(game, playerOne, amountOfPlayers);
+                            this.gameTurn(game, playerOne, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -451,7 +310,7 @@ public class GameController implements ActionInterface {
                     }
                     if (game.getPlayers()[playerTwo].isInGame()) { //PLAYER 2
                         if (game.getPlayers()[playerTwo].getMoney() > 0) {
-                            this.playerTurn(game, playerTwo, amountOfPlayers);
+                            this.gameTurn(game, playerTwo, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -460,7 +319,7 @@ public class GameController implements ActionInterface {
                     }
                     if (game.getPlayers()[playerThree].isInGame()) { //PLAYER 3
                         if (game.getPlayers()[playerThree].getMoney() > 0) {
-                            this.playerTurn(game, playerThree, amountOfPlayers);
+                            this.gameTurn(game, playerThree, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerThree].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -487,7 +346,7 @@ public class GameController implements ActionInterface {
                 while (gameRun) {
                     if (game.getPlayers()[playerOne].isInGame()) { //PLAYER 1
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
-                            this.playerTurn(game, playerOne, amountOfPlayers);
+                            this.gameTurn(game, playerOne, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -496,7 +355,7 @@ public class GameController implements ActionInterface {
                     }
                     if (game.getPlayers()[playerTwo].isInGame()) { //PLAYER 2
                         if (game.getPlayers()[playerTwo].getMoney() > 0) {
-                            this.playerTurn(game, playerTwo, amountOfPlayers);
+                            this.gameTurn(game, playerTwo, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -505,7 +364,7 @@ public class GameController implements ActionInterface {
                     }
                     if (game.getPlayers()[playerThree].isInGame()) { //PLAYER 3
                         if (game.getPlayers()[playerThree].getMoney() > 0) {
-                            this.playerTurn(game, playerThree, amountOfPlayers);
+                            this.gameTurn(game, playerThree, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerThree].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -514,7 +373,7 @@ public class GameController implements ActionInterface {
                     }
                     if (game.getPlayers()[playerFour].isInGame()) { //PLAYER 4
                         if (game.getPlayers()[playerFour].getMoney() > 0) {
-                            this.playerTurn(game, playerFour, amountOfPlayers);
+                            this.gameTurn(game, playerFour, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerFour].getName() + " has ran out of money! you've lost the game buddy.");
                             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -541,164 +400,6 @@ public class GameController implements ActionInterface {
                 }
                 break;
         }
-    }
-
-    /**
-     * This will get triggered every time a player completes a full round.
-     *
-     * @param game GameCreator object
-     * @param player the player number
-     */
-    @Override
-    public void playerPassesThroughGO(GameCreator game, int player) {
-        System.out.println("----------------------------------------------------------------------PLAYER-PASSES-THROUGH-GO--------------------------------------------------------------------------------");
-        System.out.println("You have completed one full round and you crossed go, you will be paid 10000");
-        System.out.println(game.getPlayers()[player].getName() + " your current balance is: " + game.getPlayers()[player].getMoney());
-        game.getPlayers()[player].payPlayer(10000);
-        System.out.println(game.getPlayers()[player].getName() + " your new balance is: " + game.getPlayers()[player].getMoney());
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-    }
-
-    /**
-     * This method is to see if a player needs to pay rent.
-     *
-     * @param game
-     * @param amountOfPlayers
-     * @param currentPlayer
-     */
-    public void playerPaysRent(GameCreator game, int amountOfPlayers, int currentPlayer) {
-        for (int player = 0; player < amountOfPlayers; player++) {
-            if (player != currentPlayer) {
-                for (int k = 0; k < 24; k++) {
-                    if (game.getPlayers()[player].getAsset()[k] != null) {
-                        if (game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getLocationID() == game.getPlayers()[currentPlayer].getCurrentLocation().getLocationID()) {
-                            System.out.println("-----------------------------------------------------------------LANDED-ON-AN-ASSET-OWNED-BY-A-PLAYER-------------------------------------------------------------------------");
-                            System.out.println("Oh no! " + game.getPlayers()[currentPlayer].getName() + " has landed on the asset of " + game.getPlayers()[player].getName());
-                            System.out.println(game.getPlayers()[currentPlayer].getName() + " has to pay " + game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice() + " to " + game.getPlayers()[player].getName());
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[currentPlayer].chargePlayer(game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice());
-                            game.getPlayers()[player].payPlayer(game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice());
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * This method will check to see if the player can purchase the asset or not
-     *
-     * @param game
-     * @param amountOfPlayers
-     * @param currentPlayer
-     * @return true or false;
-     */
-    public boolean checkIfAssetIsAlreadyOwned(GameCreator game, int amountOfPlayers, int currentPlayer) {
-        for (int player = 0; player < amountOfPlayers; player++) {
-            if (player != currentPlayer) {
-                for (int k = 0; k < 24; k++) {
-                    if (game.getPlayers()[player].getAsset()[k] != null) {
-                        if (game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getLocationID() == game.getPlayers()[currentPlayer].getCurrentLocation().getLocationID()) {
-                            System.out.println("Sorry it appears that this house is already owned by someone else");
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * When a player lands on chance this get triggered.
-     *
-     * @param game
-     * @param player
-     * @return if it returns false that means the player didn't go jail.
-     */
-    @Override
-    public boolean playerLandsOnChance(GameCreator game, int player
-    ) {
-        System.out.println("--------------------------------------------------------LANDED-ON-CHANCE------------------------------------------------------------------------------------------------------");
-        System.out.println(game.getPlayers()[player].getName() + " has landed on a chance card, lets roll the dioe to see what you will get");
-        this.playerEngagement();
-        int diceRoll = this.diceRoll();
-        System.out.println(game.getPlayers()[player].getName() + " has rolled a " + diceRoll);
-        boolean check = false;
-
-        switch (diceRoll) {
-            case 1://fall through
-            case 2:
-                System.out.println("Congratulations you have won 10000! this will be added to you account");
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                game.getPlayers()[player].payPlayer(10000);
-                break;
-            case 3://fall through
-            case 4:
-                System.out.println("Oh no! the bank is asking you to pay 5000 for taxes! 5000 will be charged from your account");
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                game.getPlayers()[player].chargePlayer(5000);
-                break;
-            case 5://fall through
-            case 6:
-                System.out.println("Well it seems that youre quite unlucky today! the police has just notified us that you were seen speeding, you will go to jail!");
-                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                game.getPlayers()[player].moveToJail(game.getLocations()[6]);
-                check = true;
-                break;
-        }
-        return check;
-    }
-
-    /**
-     * This method saves all players.
-     *
-     * @param game
-     * @param amountOfPlayers
-     */
-    @Override
-    public void savePlayer(GameCreator game, int amountOfPlayers
-    ) {
-        for (int i = 0; i < amountOfPlayers; i++) {
-            try {
-                String filename = "player" + i + ".ser";
-                FileOutputStream file = new FileOutputStream(filename);
-                ObjectOutputStream out = new ObjectOutputStream(file);
-
-                out.writeObject(game.getPlayers()[i]);
-
-            } catch (IOException ex) {
-                System.out.println("IOException is caught");
-            }
-        }
-    }
-
-    /**
-     * This method loads the players and returns them in an array.
-     *
-     * @param amountOfPlayers
-     * @return array of Player with the size of amountOfPlayers
-     */
-    @Override
-    public Player[] loadPlayer(int amountOfPlayers
-    ) {
-        Player[] players = new Player[amountOfPlayers];
-
-        for (int i = 0; i < amountOfPlayers; i++) {
-            try {
-                String filename = "player" + i + ".ser";
-                FileInputStream file = new FileInputStream(filename);
-                ObjectInputStream in = new ObjectInputStream(file);
-
-                players[i] = (Player) in.readObject();
-
-            } catch (IOException e) {
-                System.out.println("IOException is caught");
-            } catch (ClassNotFoundException e) {
-                System.out.println("ClassNotFoundException is caught");
-            }
-        }
-
-        return players;
     }
 
     /**
