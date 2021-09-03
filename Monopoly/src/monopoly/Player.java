@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package monopoly;
 
 /**
- *
- * @author benjh
+ * Project ID: 10 - Monopoly
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class Player implements PlayerInterface, java.io.Serializable {
-    
+
     private int money;
     private String name;
     private GlobalLocation currentLocation;
@@ -20,7 +16,7 @@ public class Player implements PlayerInterface, java.io.Serializable {
     private int rounds;
     private boolean inGame;
     private boolean paidThisRound;
-    
+
     public Player(String name, GlobalLocation currentLocation) {
         this.money = 200000;
         this.name = name;
@@ -40,67 +36,67 @@ public class Player implements PlayerInterface, java.io.Serializable {
     public void setPaidThisRound(boolean paidThisRound) {
         this.paidThisRound = paidThisRound;
     }
-    
+
     public boolean isInGame() {
         return inGame;
     }
-    
+
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
     }
-    
+
     public int getRounds() {
         return rounds;
     }
-    
+
     public void setRounds(int rounds) {
         this.rounds = rounds;
     }
-    
+
     public Assets[] getAsset() {
         return asset;
     }
-    
+
     public void setAsset(Assets asset) {
         this.asset[this.currentLocation.getLocationID()] = asset;
     }
-    
+
     public int getMoney() {
         return money;
     }
-    
+
     public void setMoney(int money) {
         this.money = money;
     }
-    
+
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public GlobalLocation getCurrentLocation() {
         return currentLocation;
     }
-    
+
     public void setCurrentLocation(GlobalLocation currentLocation) {
         this.currentLocation = currentLocation;
     }
-    
+
     public int getJailCounter() {
         return jailCounter;
     }
-    
+
     public void setJailCounter(int jailCounter) {
         this.jailCounter = jailCounter;
     }
-    
+
     public boolean isJailState() {
         return jailState;
     }
-    
+
     public void setJailState(boolean jailState) {
         this.jailState = jailState;
     }
@@ -148,13 +144,13 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.asset[this.currentLocation.getLocationID()] = asset;
         this.setMoney(this.getMoney() - this.currentLocation.cloneObject().getPrice());
     }
-    
+
     @Override
     public void sellAsset(Assets asset) {
         this.asset[asset.getBoardPosition().getLocationID()] = null;
         this.setMoney(this.getMoney() + this.currentLocation.cloneObject().getSellPrice());
     }
-    
+
     @Override
     public void upgradeAsset(Assets asset, int level) {
         for (int i = 0; i < level; i++) {
@@ -162,22 +158,26 @@ public class Player implements PlayerInterface, java.io.Serializable {
             this.setMoney(this.getMoney() - asset.getBoardPosition().cloneObject().getPrice());
         }
     }
-    
+
     @Override
     public void moveToJail(GlobalLocation location) {
         this.setJailCounter(0);
         this.setJailState(true);
         this.setCurrentLocation(location);
     }
-    
+
     public void moveOutOfJail(GlobalLocation location) {
         this.setJailCounter(0);
         this.setJailState(false);
         this.setCurrentLocation(location);
     }
-    
+
     @Override
     public String toString() {
-        return "Player: " + name + ", money: " + money + ", current location: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset + ", rounds: " + rounds;
+        if (asset == null) {
+            return "Player: " + name + ", money: " + money + ", current location: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + "The player owns no assets at this time";
+        } else {
+            return "Player: " + name + ", money: " + money + ", current location: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset + ", rounds: " + rounds;
+        }
     }
 }
