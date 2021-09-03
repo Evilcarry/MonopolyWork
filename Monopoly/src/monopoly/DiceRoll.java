@@ -1,13 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package monopoly;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
- *
- * @author benjh
+ * Project ID: 10 - Monopoly
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class DiceRoll {
 
@@ -23,7 +22,12 @@ public class DiceRoll {
      * @return the random number generated.
      */
     public int diceRoll() {
-        RandomNum roll = new RandomNum();
+        roll = new RandomNum();
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DiceRoll.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return roll.randomNumGenerator();
     }
 }

@@ -1,35 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package monopoly;
 
 import java.util.Scanner;
 
 /**
- *
- * @author benjh
+ * Project ID: 10 - Monopoly
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
-public class MenuForGame implements MenuInterface{
+public class MenuForGame implements MenuInterface {
 
     private GameCreator game;
+    private int amountOfPlayers;
 
-    public MenuForGame(GameCreator game) {
+    public MenuForGame(GameCreator game, int amountOfPlayers) {
         this.game = game;
+        this.amountOfPlayers = amountOfPlayers;
     }
 
     /**
      * This is the buyMenu method, it will display a menu for the userOption so
-     * they can purchase assets.
+     * they can purchase assets, only if a player doesn't own it already.
      *
      * @param game which is a GameCreator object.
      * @param player is the number of the player.
      */
     @Override
     public void buyMenu(GameCreator game, int player) {
-        if (game.getPlayers()[player].getCurrentLocation().getLocationID() % 3 == 0) {
+        if (game.getPlayers()[player].getCurrentLocation().getLocationID() % 3 == 0) //This condition checks to see that the player is not on a chance loation.
+        {
             System.out.println("Sorry this property is not for sale!");
+        } else if (this.ownsProperty(game, player)) // This will check to see if the asset is not owned by another player
+        {
+            System.out.println("Sorry this asset is owned by another player, you cannot purchase it");
         } else {
 
             System.out.println("------------------------------------------------------------------------------BUY-MENU----------------------------------------------------------------------------------------");
@@ -47,7 +49,7 @@ public class MenuForGame implements MenuInterface{
                     if (game.getPlayers()[player].getMoney() >= game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice()) {
                         game.getPlayers()[player].purchaseAsset(game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
                         System.out.println("You have successfully purchased this asset");
-                        System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
+                        System.out.println(game.getPlayers()[player].getName() + " your current balane is " + game.getPlayers()[player].getMoney());
                     } else {
                         System.out.println("Sorry you do not have sufficient funds to purchase this properly");
                     }
@@ -94,9 +96,9 @@ public class MenuForGame implements MenuInterface{
 
                 if (game.getPlayers()[player].getAsset()[locationOfSell] != null) {
                     System.out.println("congratulations you've sold your asset");
-                    System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
                     System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                     game.getPlayers()[player].sellAsset(game.getPlayers()[player].getAsset()[locationOfSell]);
+                    System.out.println(game.getPlayers()[player].getName() + " your current balane is " + game.getPlayers()[player].getMoney());
                     trueTillRightInput = false;
                 } else if (locationOfSell == 0) {
                     System.out.println("Thank you for accessing the sell menu!");
@@ -125,7 +127,7 @@ public class MenuForGame implements MenuInterface{
         System.out.println("Welcome to the upgrade menu");
         System.out.println("Here you can upgrade your currently owned assets!");
         System.out.println("You can only upgrade one Asset per turn");
-        System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
+        System.out.println(game.getPlayers()[player].getName() + " your current balane is " + game.getPlayers()[player].getMoney());
         System.out.println("Here is a list of all the assets you currently own");
 
         boolean trueTillRightInput = false;
@@ -168,7 +170,7 @@ public class MenuForGame implements MenuInterface{
                             } else {
                                 System.out.println(game.getPlayers()[player].getAsset()[locationOfUpgrade] + " will be upgraded to level " + levelOfUpgrade);
                                 game.getPlayers()[player].upgradeAsset(game.getPlayers()[player].getAsset()[locationOfUpgrade], levelOfUpgrade);
-                                System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
+                                System.out.println(game.getPlayers()[player].getName() + " your current balane is " + game.getPlayers()[player].getMoney());
                                 System.out.println("Thank you for accessing the upgrade menu!");
                                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                                 trueTillRightInputTwo = false;
@@ -190,6 +192,31 @@ public class MenuForGame implements MenuInterface{
                 System.out.println("It appears that you've entered the wrong input, please try again");
             }
         }
+    }
+    
+       /**
+     * This method checks to see if a player owns the property already.
+     * @param game
+     * @param currentPlayer
+     * @return true if it is already owned or else it returns false
+     */
+    @Override
+    public boolean ownsProperty(GameCreator game, int currentPlayer)
+    {
+        boolean alreadyOwned = false;
+        for (int player = 0; player < this.amountOfPlayers; player++) {
+            if (player != currentPlayer) {
+                for (int k = 0; k < 24; k++) {
+                    if (game.getPlayers()[player].getAsset()[k] != null) {
+                        if (game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getLocationID() == game.getPlayers()[currentPlayer].getCurrentLocation().getLocationID()) {
+                            alreadyOwned = true;
+                            return alreadyOwned;
+                        }
+                    }
+                }
+            }
+        }
+        return alreadyOwned;
     }
 
     /**

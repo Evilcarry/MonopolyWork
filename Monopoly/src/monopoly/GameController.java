@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 /**
  * Project ID: 10 - Monopoly
- *
  * @author Benjamin Andres Fuentes Cavieres - 20104709
  * @author Sean Simpkins - 20105546
  */
@@ -100,7 +99,7 @@ public class GameController implements ActionInterface {
         this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
         this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
         this.newGame.createAssets(); //creates all the assets for each location.
-        this.menu = new MenuForGame(this.newGame);
+        this.menu = new MenuForGame(this.newGame, amountOfPlayers);
         this.playerForGameActions = new PlayerForGameActions(this.newGame);
         this.saveLoad = new GameSavingAndLoading(this.newGame, amountOfPlayers);
         return amountOfPlayers;
@@ -130,7 +129,7 @@ public class GameController implements ActionInterface {
             this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers));
         }
         this.newGame.createAssets(); //creates all the assets for each location.
-        this.menu = new MenuForGame(this.newGame);
+        this.menu = new MenuForGame(this.newGame, amountOfPlayers);
         this.playerForGameActions = new PlayerForGameActions(this.newGame);
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         return amountOfPlayers;
@@ -212,7 +211,7 @@ public class GameController implements ActionInterface {
                 System.out.println(game.getPlayers()[player]);
                 int userOption = this.menu.menuLoader(game, player, playerForGameActions.playerMessage(game, player));
                 if (userOption == 2) {
-                    System.out.println("Now you can roll you die!");
+                    System.out.println("Now the die will roll!");
                     this.saveLoad.savePlayer(game, amountOfPlayers);
                     playerForGameActions.playerEngagement();
                     int diceRoll = this.roll.diceRoll();
