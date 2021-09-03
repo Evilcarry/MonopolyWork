@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 /**
  * Project ID: 10 - Monopoly
+ *
  * @author Benjamin Andres Fuentes Cavieres - 20104709
  * @author Sean Simpkins - 20105546
  */
@@ -145,7 +146,7 @@ public class GameController implements ActionInterface {
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         return names;
     }
-    
+
     /**
      * This method asks the player for an input from 1 to 4 to see what they
      * want to do if the player inputs 0 the program skips the user turn
@@ -213,6 +214,9 @@ public class GameController implements ActionInterface {
         return roll.randomNumGenerator();
     }
 
+    /**
+     * This is just to engage the player.
+     */
     @Override
     public void playerEngagement() {
         Scanner engagementScan = new Scanner(System.in);
@@ -356,8 +360,7 @@ public class GameController implements ActionInterface {
                     if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                         if (!game.getPlayers()[player].isJailState()) {
                             game.getPlayers()[player].setJailState(true);
-                            System.out.println("It seems that you have commited a crime! you are now in jail for 3 turns!");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            System.out.println(game.getPlayers()[player].getName() + " it seems that you have commited a crime! you are now in jail for 3 turns!");
                         }
                     }
                 } else if (userOption == 2) {
@@ -370,8 +373,7 @@ public class GameController implements ActionInterface {
                     if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                         if (!game.getPlayers()[player].isJailState()) {
                             game.getPlayers()[player].setJailState(true);
-                            System.out.println("It seems that you have commited a crime! you are now in jail for 3 turns!");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            System.out.println(game.getPlayers()[player].getName() + " it seems that you have commited a crime! you are now in jail for 3 turns!");
                         }
                     }
                 } else if (userOption == 1) {
@@ -383,8 +385,7 @@ public class GameController implements ActionInterface {
                     if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
                         if (!game.getPlayers()[player].isJailState()) {
                             game.getPlayers()[player].setJailState(true);
-                            System.out.println("It seems that you have commited a crime! you are now in jail for 3 turns!");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                            System.out.println(game.getPlayers()[player].getName() + " it seems that you have commited a crime! you are now in jail for 3 turns!");
                         }
                     }
                 }
@@ -619,6 +620,7 @@ public class GameController implements ActionInterface {
     ) {
         System.out.println("--------------------------------------------------------LANDED-ON-CHANCE------------------------------------------------------------------------------------------------------");
         System.out.println(game.getPlayers()[player].getName() + " has landed on a chance card, lets roll the dioe to see what you will get");
+        this.playerEngagement();
         int diceRoll = this.diceRoll();
         System.out.println(game.getPlayers()[player].getName() + " has rolled a " + diceRoll);
         boolean check = false;
