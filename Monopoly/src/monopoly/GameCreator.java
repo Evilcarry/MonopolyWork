@@ -9,14 +9,13 @@ package monopoly;
  *
  * @author benjh
  */
-public class GameCreator {
+public class GameCreator implements java.io.Serializable{
 
     private GlobalLocation[] locations;
     private Player[] players;
     private Assets[] assets;
-    
-    public GameCreator(int numberOfPlayers)
-    {
+
+    public GameCreator(int numberOfPlayers) {
         this.locations = new GlobalLocation[24];
         this.players = new Player[numberOfPlayers];
         this.assets = new Assets[24];
@@ -30,12 +29,13 @@ public class GameCreator {
 
     /**
      * This method creates the players.
+     *
      * @param numberOfPlayers which dictates the number of players.
      * @param playerName[] which has the names of the players.
-    */
+     */
     public void createPlayers(int numberOfPlayers, String playerName[]) {
         for (int i = 0; i < numberOfPlayers; i++) {
-            this.players[i] = new Player(playerName[i], locations[2]);
+            this.players[i] = new Player(playerName[i], locations[0]);
         }
     }
 
@@ -67,27 +67,19 @@ public class GameCreator {
     }
     /*{
         for (int i = 0; i < 24; i++) {
-            
+
             if (i == 0) {
                 this.locations[i] = new GoLocation("Go", i);
-            }
-                else if (i == 6 || i == 12) {
+            } else if (i == 6 || i == 12) {
                 this.locations[i] = new GotoJail("Go to jail", i);
-            }
-            else if (i % 3 == 0) {
-                if (i == 15)
-                {
-                locations[i] = new ChanceLocation("Chance", i, i, "this is a chance card");
-                }
-                if (i == 18)
-                {
-                    
-                }
-            } else 
-            {
+            } else if (i % 3 == 0) {
+                    locations[i] = new ChanceLocation("Chance", i, i, "this is a chance card");
+            } else {
                 this.locations[i] = new HousingLocation("house: " + i, i, 10000, 0, 5000, 5000);
             }
         }
+        
+        this.locations[0] = new GoLocation("Go", 0);
     }
 */
     public GlobalLocation[] getLocations() {

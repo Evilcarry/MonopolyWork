@@ -4,7 +4,7 @@ package monopoly;
  *
  * @author benjh
  */
-public abstract class GlobalLocation {
+public abstract class GlobalLocation implements java.io.Serializable{
     private String name;
     private int locationID;
     
@@ -34,7 +34,7 @@ public abstract class GlobalLocation {
 
     @Override
     public String toString() {
-        return "GlobalLocation{" + "name=" + name + ", locationID=" + locationID + '}';
+        return "Name of the location: " + name + ", locationID: " + locationID;
     }
     
 }
