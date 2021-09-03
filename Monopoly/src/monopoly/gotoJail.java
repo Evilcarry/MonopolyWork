@@ -5,9 +5,9 @@ package monopoly;
  * @author Benjamin Andres Fuentes Cavieres - 20104709
  * @author Sean Simpkins - 20105546
  */
-public class GotoJail extends GlobalLocation{
+public class GoToJail extends GlobalLocation{
     
-    public GotoJail(String name, int locationID) {
+    public GoToJail(String name, int locationID) {
         super(name, locationID);
     }
 
