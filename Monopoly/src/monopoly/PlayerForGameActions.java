@@ -251,9 +251,12 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
         System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
     }
     
+    /**
+     * This method exits the game.
+     */
     public void exitGame() {
         System.out.println("---------------------------------------------------------------------GOOD-BYE!------------------------------------------------------------------------------------------------");
-        System.out.println("Thank you for playing the game. It will automatically save");
+        System.out.println("Thank you for playing");
         System.exit(0);
     }
 

@@ -145,12 +145,21 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.setMoney(this.getMoney() - this.currentLocation.cloneObject().getPrice());
     }
 
+    /**
+     * This method is used when selling an asset.
+     * @param asset 
+     */
     @Override
     public void sellAsset(Assets asset) {
         this.asset[asset.getBoardPosition().getLocationID()] = null;
         this.setMoney(this.getMoney() + this.currentLocation.cloneObject().getSellPrice());
     }
 
+    /**
+     * This method is used when upgrading an asset
+     * @param asset
+     * @param level 
+     */
     @Override
     public void upgradeAsset(Assets asset, int level) {
         for (int i = 0; i < level; i++) {
@@ -159,6 +168,11 @@ public class Player implements PlayerInterface, java.io.Serializable {
         }
     }
 
+    /**
+     * This method is to move a player to jail.
+     * It also sets the jailState to true and jailCounter to 0
+     * @param location 
+     */
     @Override
     public void moveToJail(GlobalLocation location) {
         this.setJailCounter(0);
@@ -166,6 +180,11 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.setCurrentLocation(location);
     }
 
+    /**
+     * This method is to move a player out of jail.
+     * It also sets the jailState to false and jailCounter to 0.
+     * @param location 
+     */
     public void moveOutOfJail(GlobalLocation location) {
         this.setJailCounter(0);
         this.setJailState(false);

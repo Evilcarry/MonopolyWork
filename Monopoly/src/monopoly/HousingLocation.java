@@ -19,6 +19,10 @@ public class HousingLocation extends GlobalLocation {
         this.sellPrice = sellPrice;
     }
     
+    /**
+     * This method returns a clone copy of the HousingLocation object.
+     * @return a HousingLocation object.
+     */
     @Override
     public HousingLocation cloneObject()
     {
