@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package monopoly;
 
 /**
- *
- * @author benjh
+ * Project ID: 10 - Monopoly
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class GameCreator implements java.io.Serializable{
 
@@ -20,6 +16,7 @@ public class GameCreator implements java.io.Serializable{
         this.players = new Player[numberOfPlayers];
         this.assets = new Assets[24];
     }
+    
 
     public void createAssets() {
         for (int i = 0; i < 24; i++) {
@@ -36,6 +33,17 @@ public class GameCreator implements java.io.Serializable{
     public void createPlayers(int numberOfPlayers, String playerName[]) {
         for (int i = 0; i < numberOfPlayers; i++) {
             this.players[i] = new Player(playerName[i], locations[0]);
+        }
+    }
+    /**
+     * This method loads players back up from a save
+     * @param numberOfPlayers
+     * @param player[] 
+     */
+    public void createPlayers(int numberOfPlayers, Player[] player)
+    {
+        for (int i = 0; i < numberOfPlayers; i++) {
+            this.players[i] = player[i];
         }
     }
 
