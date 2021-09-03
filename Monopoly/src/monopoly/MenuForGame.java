@@ -47,6 +47,7 @@ public class MenuForGame implements MenuInterface{
                     if (game.getPlayers()[player].getMoney() >= game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice()) {
                         game.getPlayers()[player].purchaseAsset(game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
                         System.out.println("You have successfully purchased this asset");
+                        System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
                     } else {
                         System.out.println("Sorry you do not have sufficient funds to purchase this properly");
                     }
@@ -93,6 +94,7 @@ public class MenuForGame implements MenuInterface{
 
                 if (game.getPlayers()[player].getAsset()[locationOfSell] != null) {
                     System.out.println("congratulations you've sold your asset");
+                    System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
                     System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                     game.getPlayers()[player].sellAsset(game.getPlayers()[player].getAsset()[locationOfSell]);
                     trueTillRightInput = false;
@@ -122,6 +124,8 @@ public class MenuForGame implements MenuInterface{
         System.out.println("-----------------------------------------------------------------------------UPGRADE-MENU-------------------------------------------------------------------------------------");
         System.out.println("Welcome to the upgrade menu");
         System.out.println("Here you can upgrade your currently owned assets!");
+        System.out.println("You can only upgrade one Asset per turn");
+        System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
         System.out.println("Here is a list of all the assets you currently own");
 
         boolean trueTillRightInput = false;
@@ -162,11 +166,13 @@ public class MenuForGame implements MenuInterface{
                                     }
                                 }
                             } else {
-                                System.out.println(game.getPlayers()[player].getAsset()[locationOfUpgrade] + " will be upgraded to level" + levelOfUpgrade);
+                                System.out.println(game.getPlayers()[player].getAsset()[locationOfUpgrade] + " will be upgraded to level " + levelOfUpgrade);
                                 game.getPlayers()[player].upgradeAsset(game.getPlayers()[player].getAsset()[locationOfUpgrade], levelOfUpgrade);
+                                System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
                                 System.out.println("Thank you for accessing the upgrade menu!");
                                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                                 trueTillRightInputTwo = false;
+                                trueTillRightInput = false;
                             }
                         } else {
                             System.out.println("It appears you've entered the wrong input");

@@ -34,20 +34,23 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
         Scanner userScan = new Scanner(System.in);
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println(game.getPlayers()[playerNum].getName() + " you are currently standing in " + game.getPlayers()[playerNum].getCurrentLocation().getName());
-        System.out.println(game.getPlayers()[playerNum].getName() + " here are your options, Press 1 to roll your die, press 2 for the buy meny, press 3 for the sell menu, press 4 for the upgrade menu, to skip your turn press 0");
+        this.playerDisplayBalance(game, playerNum);
+        System.out.println(game.getPlayers()[playerNum].getName() + " here are your options, Press 1 to roll your die, press 2 for the buy meny, press 3 for the sell menu, press 4 for the upgrade menu");
         System.out.println("If you access a menu, you will lose the chance to access a different menu.");
         boolean TrueTillRightInput = true;
         int userInput = 0;
         while (TrueTillRightInput) {
             if (userScan.hasNextInt()) {
                 userInput = userScan.nextInt();
-                if (userInput > 4 && userInput < 0) {
+                if (userInput > 4 || userInput < 1) {
                     System.out.println("It appears you've entered the wrong input!");
                     System.out.println("Please try again");
-                    userScan.next();
                 } else {
                     TrueTillRightInput = false;
                 }
+            } else {
+                System.out.println("you have entered the wrong input please try again");
+                userScan.next();
             }
         }
         return userInput;
@@ -63,7 +66,7 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
         boolean trueTillRightInput = true;
         while (trueTillRightInput) {
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.println("input a 0 to quit the game, any other number will roll your die");
+            System.out.println("0 will terminate the game, any other number will roll the die");
             if (engagementScan.hasNextInt()) {
                 int userInput = engagementScan.nextInt();
 
@@ -136,6 +139,7 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
                     if (game.getPlayers()[player].getMoney() > 0) {
                         System.out.println("You have successfully purchased your way out of jail");
                         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                        this.playerDisplayBalance(game, player);
                         if (game.getPlayers()[player].getCurrentLocation().getLocationID() == 6) {
                             game.getPlayers()[player].moveOutOfJail(game.getLocations()[6]);
                             trueTillRightInput = false;
@@ -170,7 +174,7 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
     public void playerPassesThroughGO(GameCreator game, int player) {
         System.out.println("----------------------------------------------------------------------PLAYER-PASSES-THROUGH-GO--------------------------------------------------------------------------------");
         System.out.println("You have completed one full round and you crossed go, you will be paid 10000");
-        System.out.println(game.getPlayers()[player].getName() + " your current balance is: " + game.getPlayers()[player].getMoney());
+        this.playerDisplayBalance(game, player);
         game.getPlayers()[player].payPlayer(10000);
         System.out.println(game.getPlayers()[player].getName() + " your new balance is: " + game.getPlayers()[player].getMoney());
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
@@ -187,7 +191,7 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
     public boolean playerLandsOnChance(GameCreator game, int player
     ) {
         System.out.println("--------------------------------------------------------LANDED-ON-CHANCE------------------------------------------------------------------------------------------------------");
-        System.out.println(game.getPlayers()[player].getName() + " has landed on a chance card, lets roll the dioe to see what you will get");
+        System.out.println(game.getPlayers()[player].getName() + " has landed on a chance card, lets roll the die to see what you will get");
         this.playerEngagement();
         int diceRoll = this.roll.diceRoll();
         System.out.println(game.getPlayers()[player].getName() + " has rolled a " + diceRoll);
@@ -199,12 +203,14 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
                 System.out.println("Congratulations you have won 10000! this will be added to you account");
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 game.getPlayers()[player].payPlayer(10000);
+                this.playerDisplayBalance(game, player);
                 break;
             case 3://fall through
             case 4:
                 System.out.println("Oh no! the bank is asking you to pay 5000 for taxes! 5000 will be charged from your account");
                 System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                 game.getPlayers()[player].chargePlayer(5000);
+                this.playerDisplayBalance(game, player);
                 break;
             case 5://fall through
             case 6:
@@ -244,6 +250,11 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
         }
     }
 
+    @Override
+    public void playerDisplayBalance(GameCreator game, int player) {
+        System.out.println(game.getPlayers()[player].getName()+" your current balane is " + game.getPlayers()[player].getMoney());
+    }
+    
     public void exitGame() {
         System.out.println("---------------------------------------------------------------------GOOD-BYE!------------------------------------------------------------------------------------------------");
         System.out.println("Thank you for playing the game. It will automatically save");
@@ -265,4 +276,5 @@ public class PlayerForGameActions implements PlayerForGameActionsInterface {
     public void setRoll(DiceRoll roll) {
         this.roll = roll;
     }
+
 }

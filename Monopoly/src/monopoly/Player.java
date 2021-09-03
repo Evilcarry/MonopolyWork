@@ -2,6 +2,7 @@ package monopoly;
 
 /**
  * Project ID: 10 - Monopoly
+ *
  * @author Benjamin Andres Fuentes Cavieres - 20104709
  * @author Sean Simpkins - 20105546
  */
@@ -174,10 +175,6 @@ public class Player implements PlayerInterface, java.io.Serializable {
 
     @Override
     public String toString() {
-        if (asset == null) {
-            return "Player: " + name + ", money: " + money + ", current location: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + "The player owns no assets at this time";
-        } else {
-            return "Player: " + name + ", money: " + money + ", current location: " + currentLocation + ", jailCounter: " + jailCounter + ", jailState: " + jailState + ", asset: " + asset + ", rounds: " + rounds;
-        }
+        return name + " currently has " + money + " dollars. Currently standing at " + currentLocation + ", rounds: " + rounds;
     }
 }
