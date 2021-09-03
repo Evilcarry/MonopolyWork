@@ -203,26 +203,15 @@ public class GameController implements ActionInterface {
                 playerForGameActions.playerPassesThroughGO(game, player);
             }
             boolean playerMove = false;
-            if ((game.getPlayers()[player].getCurrentLocation().getLocationID() % 3) == 0 && !game.getPlayers()[player].isJailState() && game.getPlayers()[player].getCurrentLocation().getLocationID() != 0) {
+            if ((game.getPlayers()[player].getCurrentLocation().getLocationID() % 3) == 0 && !game.getPlayers()[player].isJailState() && game.getPlayers()[player].getCurrentLocation().getLocationID() != 0 && game.getPlayers()[player].getCurrentLocation().getLocationID() != 6 && game.getPlayers()[player].getCurrentLocation().getLocationID() != 12) {
                 playerMove = playerForGameActions.playerLandsOnChance(game, player);
             }
 
             if (!playerMove) {
+                System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+                System.out.println(game.getPlayers()[player]);
                 int userOption = this.menu.menuLoader(game, player, playerForGameActions.playerMessage(game, player));
-                if (userOption == 0) {
-                    System.out.println("Since you skipped your turn, the die will roll");
-                    this.saveLoad.savePlayer(game, amountOfPlayers);
-                    playerForGameActions.playerEngagement();
-                    int diceRoll = this.roll.diceRoll();
-                    this.movePlayerAround(game, player, diceRoll);
-                    playerForGameActions.playerPaysRent(game, amountOfPlayers, player);
-                    if (game.getPlayers()[player].getCurrentLocation() == game.getLocations()[6] || game.getPlayers()[player].getCurrentLocation() == game.getLocations()[12]) {
-                        if (!game.getPlayers()[player].isJailState()) {
-                            game.getPlayers()[player].setJailState(true);
-                            System.out.println(game.getPlayers()[player].getName() + " it seems that you have commited a crime! you are now in jail for 3 turns!");
-                        }
-                    }
-                } else if (userOption == 2) {
+                if (userOption == 2) {
                     System.out.println("Now you can roll you die!");
                     this.saveLoad.savePlayer(game, amountOfPlayers);
                     playerForGameActions.playerEngagement();
@@ -275,11 +264,7 @@ public class GameController implements ActionInterface {
                             this.gameTurn(game, playerOne, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulatios");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerOne].setInGame(false);
-                            game.getPlayers()[playerTwo].setInGame(false);
-                            gameRun = false;
+                            this.gameWinner(game, playerTwo);
                         }
                     }
                     if (game.getPlayers()[playerTwo].isInGame()) {
@@ -287,11 +272,7 @@ public class GameController implements ActionInterface {
                             this.gameTurn(game, playerTwo, amountOfPlayers);
                         } else {
                             System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulatios");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerOne].setInGame(false);
-                            game.getPlayers()[playerTwo].setInGame(false);
-                            gameRun = false;
+                            this.gameWinner(game, playerOne);
                         }
                     }
                 }
@@ -303,41 +284,29 @@ public class GameController implements ActionInterface {
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
                             this.gameTurn(game, playerOne, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerOne].setInGame(false);
+                            this.gameLoser(game, playerOne);
                         }
                     }
                     if (game.getPlayers()[playerTwo].isInGame()) { //PLAYER 2
                         if (game.getPlayers()[playerTwo].getMoney() > 0) {
                             this.gameTurn(game, playerTwo, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerTwo].setInGame(false);
+                            this.gameLoser(game, playerTwo);
                         }
                     }
                     if (game.getPlayers()[playerThree].isInGame()) { //PLAYER 3
                         if (game.getPlayers()[playerThree].getMoney() > 0) {
                             this.gameTurn(game, playerThree, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerThree].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerThree].setInGame(false);
+                            this.gameLoser(game, playerThree);
                         }
                     }
                     if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerTwo].isInGame()) {
-                        System.out.println(game.getPlayers()[playerThree].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerThree); //if player 3 wins
                     } else if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerThree].isInGame()) {
-                        System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerTwo); // if player 2 wins
                     } else if (!game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerThree].isInGame()) {
-                        System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerOne); // if player 1 wins
                     }
                 }
                 break;
@@ -348,54 +317,38 @@ public class GameController implements ActionInterface {
                         if (game.getPlayers()[playerOne].getMoney() > 0) {
                             this.gameTurn(game, playerOne, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerOne].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerOne].setInGame(false);
+                            this.gameLoser(game, playerOne);
                         }
                     }
                     if (game.getPlayers()[playerTwo].isInGame()) { //PLAYER 2
                         if (game.getPlayers()[playerTwo].getMoney() > 0) {
                             this.gameTurn(game, playerTwo, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerTwo].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerTwo].setInGame(false);
+                            this.gameLoser(game, playerTwo);
                         }
                     }
                     if (game.getPlayers()[playerThree].isInGame()) { //PLAYER 3
                         if (game.getPlayers()[playerThree].getMoney() > 0) {
                             this.gameTurn(game, playerThree, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerThree].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerThree].setInGame(false);
+                            this.gameLoser(game, playerThree);
                         }
                     }
                     if (game.getPlayers()[playerFour].isInGame()) { //PLAYER 4
                         if (game.getPlayers()[playerFour].getMoney() > 0) {
                             this.gameTurn(game, playerFour, amountOfPlayers);
                         } else {
-                            System.out.println(game.getPlayers()[playerFour].getName() + " has ran out of money! you've lost the game buddy.");
-                            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                            game.getPlayers()[playerFour].setInGame(false);
+                            this.gameLoser(game, playerFour);
                         }
                     }
                     if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerThree].isInGame()) {
-                        System.out.println(game.getPlayers()[playerFour].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerFour); //If player 4 wins
                     } else if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerFour].isInGame()) {
-                        System.out.println(game.getPlayers()[playerThree].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerThree); // if player 3 wins
                     } else if (!game.getPlayers()[playerOne].isInGame() && !game.getPlayers()[playerThree].isInGame() && !game.getPlayers()[playerFour].isInGame()) {
-                        System.out.println(game.getPlayers()[playerTwo].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerTwo); // if player 2 wins
                     } else if (!game.getPlayers()[playerTwo].isInGame() && !game.getPlayers()[playerThree].isInGame() && !game.getPlayers()[playerFour].isInGame()) {
-                        System.out.println(game.getPlayers()[playerOne].getName() + " has won the game! Congratulations");
-                        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-                        gameRun = false;
+                        this.gameWinner(game, playerOne); // if player 1 wins
                     }
                 }
                 break;
@@ -416,6 +369,18 @@ public class GameController implements ActionInterface {
         System.out.println("If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison");
         System.out.println("Chance cards can be good and dangerous so be careful.");
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+    }
+
+    public void gameWinner(GameCreator game, int player) {
+        System.out.println(game.getPlayers()[player].getName() + " has won the game! Congratulations");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        this.exitGame();
+    }
+
+    public void gameLoser(GameCreator game, int player) {
+        System.out.println(game.getPlayers()[player].getName() + " has ran out of money! you've lost the game buddy.");
+        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+        game.getPlayers()[player].setInGame(false);
     }
 
     public GameCreator getNewGame() {

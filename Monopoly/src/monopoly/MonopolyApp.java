@@ -6,7 +6,7 @@ package monopoly;
  * @author Sean Simpkins - 20105546
  */
 
-public class Main {
+public class MonopolyApp {
 
     public static void main(String[] args) {
     GameController game = new GameController();

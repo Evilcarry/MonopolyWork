@@ -16,4 +16,5 @@ public interface PlayerForGameActionsInterface {
     public void playerPassesThroughGO(GameCreator game, int player); //this to player for game
     public boolean playerLandsOnChance(GameCreator game, int player); //this to player for game
     public void playerPaysRent(GameCreator game, int amountOfPlayers, int currentPlayer); // this to player for game
+    public void playerDisplayBalance(GameCreator game, int player);
 }
