@@ -120,6 +120,7 @@ public class GameController implements ActionInterface {
         this.newGame = new GameCreator(amountOfPlayers); //gamecreator instance that pases the number of players
         this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
         try {
+            this.saveLoad = new GameSavingAndLoading(this.newGame, amountOfPlayers);
             this.newGame.createPlayers(amountOfPlayers, this.saveLoad.loadPlayer(amountOfPlayers)); //Here we will create players from the save
             System.out.println("Just to remind everyone, of their stats");
             for (int i = 0; i < amountOfPlayers; i++) {
