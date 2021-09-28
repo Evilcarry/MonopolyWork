@@ -9,10 +9,18 @@ public class Assets implements java.io.Serializable{
 
     private GlobalLocation location;
     private int level;
+    private String owner;
 
     public Assets(GlobalLocation boardPosition, int level) {
         this.location = boardPosition;
         this.level = level;
+        this.owner = null;
+    }
+    
+    public Assets(GlobalLocation boardPosition, int level, String owner){
+        this.location = boardPosition;
+        this.level = level;
+        this.owner = owner;
     }
 
     public GlobalLocation getBoardPosition() {
@@ -25,6 +33,14 @@ public class Assets implements java.io.Serializable{
 
     public int getLevel() {
         return level;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     /**

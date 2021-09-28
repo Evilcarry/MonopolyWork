@@ -28,6 +28,18 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.inGame = true;
         this.paidThisRound = false;
     }
+    
+    public Player(String name, int money, GlobalLocation currentLocation, int jailCounter, boolean jailState, Assets[] asset, int rounds, boolean inGame, boolean paidThisRound){
+        this.name = name;
+        this.money = money;
+        this.currentLocation = currentLocation;
+        this.jailCounter = jailCounter;
+        this.jailState = jailState;
+        this.asset = asset;
+        this.rounds = rounds;
+        this.inGame = inGame;
+        this.paidThisRound = paidThisRound;
+    }
 
     public boolean isPaidThisRound() {
         return paidThisRound;
