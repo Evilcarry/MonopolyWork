@@ -11,10 +11,12 @@ public class MenuForGame implements MenuInterface {
 
     private GameCreator game;
     private int amountOfPlayers;
+    private GameSavingAndLoading gameSave;
 
-    public MenuForGame(GameCreator game, int amountOfPlayers) {
+    public MenuForGame(GameCreator game, int amountOfPlayers, GameSavingAndLoading gameSave) {
         this.game = game;
         this.amountOfPlayers = amountOfPlayers;
+        this.gameSave = gameSave;
     }
 
     /**
@@ -48,6 +50,8 @@ public class MenuForGame implements MenuInterface {
                 if (userAnswer == 1) {
                     if (game.getPlayers()[player].getMoney() >= game.getLocations()[game.getPlayers()[player].getCurrentLocation().getLocationID()].cloneObject().getPrice()) {
                         game.getPlayers()[player].purchaseAsset(game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()]);
+                        game.getAssets()[game.getPlayers()[player].getCurrentLocation().getLocationID()].setOwner(game.getPlayers()[player].getName());
+                        gameSave.updateAssets(game.getPlayers()[player].getCurrentLocation().getLocationID(), "buy");
                         System.out.println("You have successfully purchased this asset");
                         System.out.println(game.getPlayers()[player].getName() + " your current balane is " + game.getPlayers()[player].getMoney());
                     } else {
@@ -98,6 +102,8 @@ public class MenuForGame implements MenuInterface {
                     System.out.println("congratulations you've sold your asset");
                     System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
                     game.getPlayers()[player].sellAsset(game.getPlayers()[player].getAsset()[locationOfSell]);
+                    game.getAssets()[locationOfSell].setOwner("");
+                    gameSave.updateAssets(locationOfSell, "sell");
                     System.out.println(game.getPlayers()[player].getName() + " your current balane is " + game.getPlayers()[player].getMoney());
                     trueTillRightInput = false;
                 } else if (locationOfSell == 0) {

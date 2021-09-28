@@ -8,7 +8,7 @@ import java.util.Scanner;
  * @author Benjamin Andres Fuentes Cavieres - 20104709
  * @author Sean Simpkins - 20105546
  */
-public class GameController implements ActionInterface {
+public class GameController implements ActionInterface{
 
     private GameCreator newGame;
     private MenuForGame menu;
@@ -101,9 +101,10 @@ public class GameController implements ActionInterface {
         this.newGame.createLocations(); //creates all the locations, possibly going to read them off a file
         this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers)); //creates the names of each player
         this.newGame.createAssets(); //creates all the assets for each location.
-        this.menu = new MenuForGame(this.newGame, amountOfPlayers);
-        this.playerForGameActions = new PlayerForGameActions(this.newGame);
         this.saveLoad = new GameSavingAndLoading(this.newGame, amountOfPlayers);
+        this.saveLoad.savePlayer(newGame, amountOfPlayers);
+        this.menu = new MenuForGame(this.newGame, amountOfPlayers, saveLoad);
+        this.playerForGameActions = new PlayerForGameActions(this.newGame);
         return amountOfPlayers;
     }
 
@@ -132,7 +133,7 @@ public class GameController implements ActionInterface {
             this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers));
         }
         this.newGame.createAssets(); //creates all the assets for each location.
-        this.menu = new MenuForGame(this.newGame, amountOfPlayers);
+        this.menu = new MenuForGame(this.newGame, amountOfPlayers, saveLoad);
         this.playerForGameActions = new PlayerForGameActions(this.newGame);
         System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
         return amountOfPlayers;
@@ -221,7 +222,7 @@ public class GameController implements ActionInterface {
                 int userOption = this.menu.menuLoader(game, player, playerForGameActions.playerMessage(game, player));
                 if (userOption == 2) {
                     System.out.println("Now the die will roll!");
-                    this.saveLoad.savePlayer(game, amountOfPlayers);
+                    this.saveLoad.updatePlayer(game, amountOfPlayers);
                     playerForGameActions.playerEngagement();
                     int diceRoll = this.roll.diceRoll();
                     this.movePlayerAround(game, player, diceRoll);
@@ -233,8 +234,7 @@ public class GameController implements ActionInterface {
                         }
                     }
                 } else if (userOption == 1) {
-                    this.saveLoad.savePlayer(game, amountOfPlayers);
-                    //playerForGameActions.playerEngagement();
+                    this.saveLoad.updatePlayer(game, amountOfPlayers);
                     int diceRoll = this.roll.diceRoll();
                     this.movePlayerAround(game, player, diceRoll);
                     playerForGameActions.playerPaysRent(game, amountOfPlayers, player);
