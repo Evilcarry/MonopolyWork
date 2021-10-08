@@ -130,7 +130,7 @@ public class GameController implements ActionInterface{
         } catch (NullPointerException e) {
             System.out.println("It seems that your save had less players than the current amount");
             System.out.println("The game will start without loading the save.");
-            this.newGame.createPlayers(amountOfPlayers, this.setPlayerName(amountOfPlayers));
+            this.newGame.createPlayers(amountOfPlayers, this.setPlayerName());
         }
         this.newGame.createAssets(); //creates all the assets for each location.
         this.menu = new MenuForGame(this.newGame, amountOfPlayers, saveLoad);
@@ -146,17 +146,8 @@ public class GameController implements ActionInterface{
      * @return an array of names.
      */
     @Override
-    public String[] setPlayerName(int numberOfPlayers) {
-        Scanner playerNameScan = new Scanner(System.in);
-        String[] names = new String[numberOfPlayers];
-
-        for (int i = 0; i < names.length; i++) {
-            System.out.println("Please input the name of the player number " + (i + 1));
-            names[i] = playerNameScan.nextLine();
-            System.out.println("You have entered " + names[i] + " as your name");
-        }
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-        return names;
+    public void setPlayerName(int numberOfPlayers, String[] playernames) {
+        this.newGame.createPlayers(numberOfPlayers, playernames);
     }
 
     /**
@@ -367,17 +358,19 @@ public class GameController implements ActionInterface{
      * This method displays the instructions to the monopoly game.
      */
     @Override
-    public void instructions() {
-        System.out.println("----------------------------------------------------------------------INSTRUCTIONS--------------------------------------------------------------------------------------------");
-        System.out.println("The rules are simple, the player that gets to round 10 first wins, or if you all agree to end the game earlie, no one wins, or until everyone runs out of money");
-        System.out.println("Each player has to move across the 24 different locations");
-        System.out.println("Each player gets given $200000 at the start of the game, a player can get more money by landing on a chance card, by owning a property and other players paying rent \nAlso whenever they complete a round and go through the starting location 'GO'");
-        System.out.println("A player can also sell an asset, only allowed to sell one asset per turn");
-        System.out.println("Each player can purchase the location they landed on but they must have the necessary funds to purchase it, be careful! if you run out of money you instantly lose the game");
-        System.out.println("If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison");
-        System.out.println("Chance cards can be good and dangerous so be careful.");
-        System.out.println("Game will automatically save after each dice roll.");
-        System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+    public String instructions() {
+        String instructions = "----------------------------------------------------------------------INSTRUCTIONS--------------------------------------------------------------------------------------------\n";
+        instructions+="The rules are simple, the player that gets to round 10 first wins, or if you all agree to end the game earlie, no one wins, or until everyone runs out of money\n";
+        instructions+="Each player has to move across the 24 different locations\n";
+        instructions+="Each player gets given $200000 at the start of the game, a player can get more money by landing on a chance card, by owning a property and other players paying rent \n";
+        instructions+="Also whenever they complete a round and go through the starting location 'GO'\n";
+        instructions+="A player can also sell an asset, only allowed to sell one asset per turn\n";
+        instructions+="Each player can purchase the location they landed on but they must have the necessary funds to purchase it, be careful! if you run out of money you instantly lose the game\n";
+        instructions+="If a player goes to jail they have to either roll a 6, if they fail to do so in 3 turns, the player will be freed from prison\n";
+        instructions+="Chance cards can be good and dangerous so be careful.\n";
+        instructions+="Game will automatically save after each dice roll.\n";
+        instructions+="------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+        return instructions;
     }
 
     public void gameWinner(GameCreator game, int player) {

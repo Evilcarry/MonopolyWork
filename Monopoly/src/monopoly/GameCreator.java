@@ -40,7 +40,7 @@ public class GameCreator implements java.io.Serializable {
 
     /**
      * This method loads players back up from a save
-     *
+     * TODO: May need to change the logic of this, instead of just giving the player object it could just create a new one.
      * @param numberOfPlayers
      * @param player[]
      */
