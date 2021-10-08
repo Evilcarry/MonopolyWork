@@ -11,7 +11,7 @@ public interface ActionInterface {
 
     public int setPlayerNumber();
 
-    public String[] setPlayerName(int numberOfPlayers);
+    public void setPlayerName(int numberOfPlayers, String[] playernames);
 
     public void movePlayerAround(GameCreator game, int player, int diceRoll);
 
@@ -19,7 +19,7 @@ public interface ActionInterface {
 
     public void gameForDifferentPlayer(int amountOfPlayers, GameCreator game);
 
-    public void instructions();
+    public String instructions();
 
     public int startWithoutLoading();
 

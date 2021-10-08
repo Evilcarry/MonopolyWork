@@ -10,20 +10,21 @@ import java.awt.event.ActionListener;
 public class MonopolyController implements ActionListener {
 
     MonopolyView view;
-    GameController game;
+    MonopolyModel model;
+    private int amountOfPlayers = 2;
 
-    public MonopolyController(MonopolyView view) {
+    public MonopolyController(MonopolyView view, MonopolyModel model) {
         this.view = view;
-        //this.game = game;
+        this.model = model;
         this.view.addActionListener(this);
     }
 
     /**
-     * 
+     *
      * @param amountOfPlayers
-     * @return 
+     * @return
      */
-    public String[] setPlayName(int amountOfPlayers) {
+    public void setPlayName(int amountOfPlayers) {
         //TODO: validate player names.
         //We can call this.view.ChooseNamePanel again if the name is wrong.
         String[] playersName = new String[amountOfPlayers];
@@ -32,24 +33,24 @@ public class MonopolyController implements ActionListener {
         playersName[1] = this.view.fieldTwo.getText();
 
         if (amountOfPlayers == 3) {
-            playersName[3] = this.view.fieldThree.getText();
+            playersName[2] = this.view.fieldThree.getText();
         } else if (amountOfPlayers == 4) {
-            playersName[3] = this.view.fieldThree.getText();
-            playersName[4] = this.view.fieldFour.getText();
+            playersName[2] = this.view.fieldThree.getText();
+            playersName[3] = this.view.fieldFour.getText();
         }
 
-        return playersName;
+        this.model.gameStart(amountOfPlayers, playersName);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String userClick = e.getActionCommand();
-        int amountOfPlayers = 2;
 
         switch (userClick) {
             case "New Game":
                 System.out.println("New Game button pressed");
                 this.view.newGamePanel();
+                //this.view.menuSell();
                 break;
             case "Load Game":
                 System.out.println("Load Game button pressed");
@@ -61,18 +62,43 @@ public class MonopolyController implements ActionListener {
                 break;
             case "3":
                 System.out.println("3 Players button pressed");
-                amountOfPlayers = 3;
+                this.amountOfPlayers = 3;
                 this.view.chooseNamePanel(amountOfPlayers);
                 break;
             case "4":
                 System.out.println("4 Players button pressed");
-                amountOfPlayers = 4;
-                this.view.chooseNamePanel(amountOfPlayers);
+                this.amountOfPlayers = 4;
+                this.view.chooseNamePanel(4);
                 break;
             case "Confirm":
                 System.out.println("Confirm button pressed");
                 //TODO: Give this to gameController but we need to modify it first so it gets the Array.
+                this.view.instructionPanel(this.model.instructions());
                 this.setPlayName(amountOfPlayers);
+                break;
+            case "Roll menu":
+                System.out.println("Die roll button pressed");
+                this.view.menuRoll();
+                break;
+            case "Sell Menu":
+                System.out.println("sell menu button pressed");
+                this.view.menuSell();
+                break;
+            case "Buy Menu":
+                System.out.println("buy menu button pressed");
+                this.view.menuBuy();
+                break;
+            case "Upgrade Menu":
+                System.out.println("upgrade menu button pressed");
+                this.view.menuUpgrade();
+                break;
+            case "Back":
+                System.out.println("Back button pressed");
+                this.view.gameBoard();
+                break;
+            case "I've read the instructions":
+                System.out.println("Instructions read button");
+                this.view.gameBoard();
                 break;
         }
     }

@@ -13,6 +13,7 @@ public class TestClass {
     public static void main(String[] args) {
         
         MonopolyView view = new MonopolyView();
-        MonopolyController control = new MonopolyController(view);
+        MonopolyModel model = new MonopolyModel();
+        MonopolyController control = new MonopolyController(view, model);
     }
 }
