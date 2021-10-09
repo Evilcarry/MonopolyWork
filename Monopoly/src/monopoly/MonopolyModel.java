@@ -13,19 +13,34 @@ public class MonopolyModel extends Observable {
     private PlayerForGameActions playerForGameActions;
     private DiceRoll roll;
     private GameSavingAndLoading saveLoad;
+    public DataReference data;
 
     public void gameStart(int amountOfPlayers, String[] playerNames) {
-        newGame = new GameCreator(amountOfPlayers);                             //Initializing newGame
-        newGame.createLocations();                                              //Creating all the locations.
-        newGame.createAssets();                                                 //Creating all the assets
-        newGame.createPlayers(amountOfPlayers, playerNames);                    //Creating all the players with names.
+        this.newGame = new GameCreator(amountOfPlayers);                             //Initializing newGame
+        this.newGame.createLocations();                                              //Creating all the locations.
+        this.newGame.createAssets();                                                 //Creating all the assets
+        this.newGame.createPlayers(amountOfPlayers, playerNames);                    //Creating all the players with names.
     }
     
+    public void dataReference(){
+        this.data = new DataReference(this.newGame);
+        this.setChanged();
+        this.notifyObservers(data);
+    }
     
+    public void nextPlayer(){
+        if (this.data.currentPlayer == this.newGame.getPlayers().length){
+            this.data.currentPlayer = 0;
+        }else{
+            this.data.currentPlayer++;
+        }
+    }
     
-    
-    
-    
+    public void upgradeAsset(){
+        this.data.upgradeAsset = true;
+        this.setChanged();
+        this.notifyObservers(data);
+    }
     
     //Instructions.
     public String instructions() {

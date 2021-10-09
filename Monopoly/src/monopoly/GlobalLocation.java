@@ -35,7 +35,7 @@ public abstract class GlobalLocation implements java.io.Serializable{
 
     @Override
     public String toString() {
-        return name + ", locationID: " + locationID;
+        return name;
     }
     
 }

@@ -5,9 +5,12 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import javax.swing.*;
@@ -25,6 +28,7 @@ public class MonopolyView extends JFrame implements Observer {
     private JPanel panelThree = new JPanel();
     private JPanel panelFour = new JPanel();
     private JPanel panelFive = new JPanel();
+
     //JButtons
     public JButton buttonOne = new JButton();
     public JButton buttonTwo = new JButton();
@@ -36,7 +40,7 @@ public class MonopolyView extends JFrame implements Observer {
     public ImageIcon goIcon = new ImageIcon("./resources/Go.jpg");
     public ImageIcon chanceIcon = new ImageIcon("./resources/Chance.jpg");
     public ImageIcon jailIcon = new ImageIcon("./resources/Jail.jpg");
-    
+
     public ImageIcon aucklandHouse = new ImageIcon("./resources/Auckland.jpg");
     public ImageIcon rotoruaHouse = new ImageIcon("./resources/Rotorua.jpg");
     public ImageIcon coromandelHouse = new ImageIcon("./resources/Coromandel.jpg");
@@ -51,15 +55,15 @@ public class MonopolyView extends JFrame implements Observer {
     public JLabel monopolyImageIcon = new JLabel(monopolyIcon);
     public JLabel diceRollIcon = new JLabel(diceRoll);
     public JLabel goLocationIcon = new JLabel(goIcon);
-    
+
     public JLabel monopolyChanceOneIcon = new JLabel(chanceIcon);
     public JLabel monopolyChanceTwoIcon = new JLabel(chanceIcon);
     public JLabel monopolyChanceThreeIcon = new JLabel(chanceIcon);
     public JLabel monopolyChanceFourIcon = new JLabel(chanceIcon);
-    
+
     public JLabel monopolyJailOneIcon = new JLabel(jailIcon);
     public JLabel monopolyJailTwoIcon = new JLabel(jailIcon);
-    
+
     public JLabel aucklandHouseIcon = new JLabel(aucklandHouse);
     public JLabel rotoruaHouseIcon = new JLabel(rotoruaHouse);
     public JLabel coromandelHouseIcon = new JLabel(coromandelHouse);
@@ -69,8 +73,10 @@ public class MonopolyView extends JFrame implements Observer {
     public JLabel christchurchHouseIcon = new JLabel(christchurchHouse);
     public JLabel queenstownHouseIcon = new JLabel(queenstownHouse);
     public JLabel fiorlandsHouseIcon = new JLabel(fiorlandsHouse);
-    
-    
+
+    //Combo box
+    public JComboBox assetSelect = new JComboBox();
+
     public JLabel textDisplay;
     //JTextComponents
     public JTextField fieldOne = new JTextField();
@@ -132,15 +138,15 @@ public class MonopolyView extends JFrame implements Observer {
     }
 
     public void menuSell() {
+        //TODO new layout
         panelTwo.removeAll();
-        
+
         buttonOne.setText("Back");
         buttonTwo.setText("Sell");
-        
+
         panelTwo.add(buttonOne, BorderLayout.CENTER);
         panelTwo.add(buttonTwo, BorderLayout.CENTER);
-        
-        
+
         this.getContentPane().removeAll();
         panelTwo.setVisible(true);
         this.add(panelTwo, BorderLayout.CENTER);
@@ -149,15 +155,16 @@ public class MonopolyView extends JFrame implements Observer {
     }
 
     public void menuUpgrade() {
+        //TODO new layout.
         panelThree.removeAll();
-        
+
         buttonOne.setText("Back");
         buttonTwo.setText("Upgrade");
-        
+
+        panelThree.add(assetSelect, BorderLayout.PAGE_START);
         panelThree.add(buttonOne, BorderLayout.CENTER);
         panelThree.add(buttonTwo, BorderLayout.CENTER);
-        
-        
+
         this.getContentPane().removeAll();
         panelThree.setVisible(true);
         this.add(panelThree, BorderLayout.CENTER);
@@ -166,15 +173,16 @@ public class MonopolyView extends JFrame implements Observer {
     }
 
     public void menuBuy() {
+        //TODO new layout
         panelTwo.removeAll();
-        
+
         buttonOne.setText("Back");
         buttonTwo.setText("Buy");
-        
+
+        panelThree.add(assetSelect, BorderLayout.PAGE_START);
         panelTwo.add(buttonOne, BorderLayout.CENTER);
         panelTwo.add(buttonTwo, BorderLayout.CENTER);
-        
-        
+
         this.getContentPane().removeAll();
         panelTwo.setVisible(true);
         this.add(panelTwo, BorderLayout.CENTER);
@@ -227,22 +235,32 @@ public class MonopolyView extends JFrame implements Observer {
         panelFour.add(queenstownHouseIcon);
         panelFour.add(christchurchHouseIcon);
         panelFour.setVisible(true);
-        
-        //Buttons for Center Panel
+
+        //for Center Panel
         buttonOne.setText("Buy Menu");
         buttonTwo.setText("Sell Menu");
         buttonThree.setText("Upgrade Menu");
         buttonFour.setText("Roll menu");
-        
+
         //Center Panel
         panelFive.removeAll();
         panelFive.setBorder(new LineBorder(Color.BLACK, 3));
-        panelFive.setLayout(new GridLayout());
+        panelFive.setLayout(new GridBagLayout());
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.ipady = 40;
+        c.weightx = 0.0;
+        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridy = 1;
+
+        panelFive.add(textArea, c);
         panelFive.add(buttonOne);
         panelFive.add(buttonTwo);
         panelFive.add(buttonThree);
         panelFive.add(buttonFour);
-        
+
         //Adding everything to the JFrame
         this.add(panelOne, BorderLayout.PAGE_START);
         this.add(panelTwo, BorderLayout.LINE_START);
@@ -306,16 +324,45 @@ public class MonopolyView extends JFrame implements Observer {
     }
 
     private void setScreenSize(JFrame panel) {
-        //Toolkit kit = Toolkit.getDefaultToolkit();
-        //Dimension screenSize = kit.getScreenSize();
-
         panel.setSize(1030, 827);
         panel.setResizable(false);
     }
 
+    public String displayPlayer(DataReference game) {
+        String currentPlayer = game.game.getPlayers()[game.currentPlayer].getName() + "'s turn \n";
+        currentPlayer += "Cash $" + game.game.getPlayers()[game.currentPlayer].getMoney() + "\n";
+        currentPlayer += "Current Location: " + game.game.getPlayers()[game.currentPlayer].getCurrentLocation().toString();
+        return currentPlayer;
+    }
+
+    public void displayAssets(DataReference game) {
+        ArrayList<String> assetList = new ArrayList<>();
+        
+        for (int i = 0; i < game.game.getPlayers()[game.currentPlayer].getAsset().length; i++) {
+            assetList.add(game.game.getPlayers()[game.currentPlayer].getAsset()[i].getBoardPosition().getName());
+        }
+        
+        DefaultComboBoxModel mod = (DefaultComboBoxModel) assetSelect.getModel();
+        mod.removeAllElements();
+
+        for (String asset : assetList){
+            mod.addElement(asset);
+        }
+        assetSelect.setModel(mod);
+    }
+
     @Override
     public void update(Observable o, Object arg) {
-        //TODO: figure out what to do with the observable.
+        DataReference game = (DataReference) arg;
+        if (game.sellAsset) {
+            displayAssets(game);
+        } else if (game.upgradeAsset) {
+            //display text with a list of all the assets to upgrade.
+        } else if (game.dieRoll) {
+            //Display die roll number.
+        } else {
+            textArea.setText(displayPlayer(game));
+        }
     }
 
     public void addActionListener(ActionListener listen) {
@@ -324,6 +371,7 @@ public class MonopolyView extends JFrame implements Observer {
         buttonTwo.addActionListener(listen);
         buttonThree.addActionListener(listen);
         buttonFour.addActionListener(listen);
+        //assetSelect.addActionListener(listen);
     }
 
 }
