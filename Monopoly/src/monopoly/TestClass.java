@@ -14,6 +14,8 @@ public class TestClass {
         
         MonopolyView view = new MonopolyView();
         MonopolyModel model = new MonopolyModel();
+        
+        model.addObserver(view);
         MonopolyController control = new MonopolyController(view, model);
     }
 }

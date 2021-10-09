@@ -90,6 +90,7 @@ public class MonopolyController implements ActionListener {
                 break;
             case "Upgrade Menu":
                 System.out.println("upgrade menu button pressed");
+                this.model.upgradeAsset();
                 this.view.menuUpgrade();
                 break;
             case "Back":
@@ -99,6 +100,7 @@ public class MonopolyController implements ActionListener {
             case "I've read the instructions":
                 System.out.println("Instructions read button");
                 this.view.gameBoard();
+                this.model.dataReference();
                 break;
         }
     }
