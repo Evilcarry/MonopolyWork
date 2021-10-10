@@ -41,6 +41,14 @@ public class MonopolyController implements ActionListener {
 
         this.model.gameStart(amountOfPlayers, playersName);
     }
+    
+    public String getAssetToUpgrade(){
+        String assetName = "";
+        
+        assetName = this.view.assetSelect.getSelectedItem().toString();
+        
+        return assetName;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -80,19 +88,30 @@ public class MonopolyController implements ActionListener {
                 System.out.println("Die roll button pressed");
                 this.view.menuRoll();
                 break;
+            case "Roll":
+                System.out.println("Roll button pressed");
+                this.model.rollToMove();
+                break;
             case "Sell Menu":
                 System.out.println("sell menu button pressed");
                 this.view.menuSell();
                 break;
             case "Buy Menu":
                 System.out.println("buy menu button pressed");
-                this.view.menuBuy();
+                if (this.model.purchaseble()){
+                    this.view.menuBuy(this.model.buyMessage());
+                }else{
+                    //TODO display a message telling the player that the location is not purchaseble.
+                }
                 break;
             case "Upgrade Menu":
                 System.out.println("upgrade menu button pressed");
-                this.model.upgradeAsset();
+                this.model.upgradeAssetMenu();
                 this.view.menuUpgrade();
                 break;
+            case "Upgrade":
+                System.out.println("Upgrade button pressed");
+                //TODO call upgrade methods.
             case "Back":
                 System.out.println("Back button pressed");
                 this.view.gameBoard();

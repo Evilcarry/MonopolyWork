@@ -168,6 +168,7 @@ public class Player implements PlayerInterface, java.io.Serializable {
     }
 
     /**
+     * TODO REMOVE.
      * This method is used when upgrading an asset
      * @param asset
      * @param level 
