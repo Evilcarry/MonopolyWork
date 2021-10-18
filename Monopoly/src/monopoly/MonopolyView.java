@@ -357,15 +357,6 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
-    public void loadGamePanel() {
-        //TODO: Need to think what to do here, Ideally a user has a save with a name.
-        //Would need to pull the data from the db send it to here thru the controller.
-        //This would only send back the saves, We can put them in a button.
-        //After that it would call a different panel for the stats of the players.
-        //https://docs.oracle.com/javase/tutorial/uiswing/components/table.html
-        //For more info on JTable
-    }
-
     public void instructionPanel(String instructions) {
         textArea = new JTextArea(instructions);
         textArea.setEditable(false);

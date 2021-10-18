@@ -17,6 +17,12 @@ public class GameCreator implements java.io.Serializable {
         this.players = new Player[numberOfPlayers];
         this.assets = new Assets[16];
     }
+    
+    public GameCreator(Player[] players){
+        this.locations = new GlobalLocation[16];
+        this.players = players;
+        this.assets = new Assets[16];
+    }
 
     /**
      * This method is in charge of creating a list of assets.

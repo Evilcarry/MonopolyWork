@@ -60,6 +60,7 @@ public class MonopolyController implements ActionListener {
     public void nextPlayerAction() {
         this.model.nextPlayer();
         this.model.resetCounters();
+        this.model.saveGame();
         if (this.model.playerInJail()) {
             this.view.jailPanel();
         } else if (this.model.playerInChance()) {
@@ -134,7 +135,9 @@ public class MonopolyController implements ActionListener {
                 break;
             case "Load Game":
                 System.out.println("Load Game button pressed");
-                this.view.loadGamePanel();
+                this.model.loadGame();
+                this.model.dataReference();
+                this.view.gameBoard(this.model.displayPlayer());
                 break;
             case "2":
                 System.out.println("2 Players button pressed");
