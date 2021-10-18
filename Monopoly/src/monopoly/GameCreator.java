@@ -22,7 +22,7 @@ public class GameCreator implements java.io.Serializable {
      * This method is in charge of creating a list of assets.
      */
     public void createAssets() {
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 16; i++) {
             if (this.locations[i].cloneObject() != null) {
                 this.assets[i] = new Assets(this.locations[i], 0);
             }

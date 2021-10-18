@@ -9,19 +9,27 @@ public class DataReference {
     public int die;
     public int currentPlayer;
     public boolean dieRoll;         // Check if the player wants to roll the die.
+    public boolean hasRolled;       // Check if player has rolled
     public boolean sellAsset;       // Check if the player wants to sell assets.
-    public int sellAssetCounter;
     public boolean upgradeAsset;    // Check if the player wants to upgrade assets.
-    public int upgradeAssetCounter;
+    public int jailDie;
+    public boolean successPurchase;
+    public boolean playerChance;
+    public boolean paytogetout;
+    public int chanceRoll;
     
     public DataReference(GameCreator game){
         this.game = game;
         this.die = 0;
         this.currentPlayer = 0;
         this.dieRoll = false;
+        this.hasRolled = false;
         this.sellAsset = false;
-        this.sellAssetCounter = 0;
         this.upgradeAsset = false;
-        this.upgradeAssetCounter = 0;
+        this.successPurchase = false;
+        this.playerChance = false;
+        this.chanceRoll = 0;
+        this.jailDie = 0;
+        this.paytogetout = false;
     }
 }

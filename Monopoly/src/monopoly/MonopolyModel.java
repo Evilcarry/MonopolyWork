@@ -9,8 +9,6 @@ import java.util.Observable;
 public class MonopolyModel extends Observable {
 
     private GameCreator newGame;
-    private MenuForGame menu;
-    private PlayerForGameActions playerForGameActions;
     private DiceRoll roll;
     private GameSavingAndLoading saveLoad;
     public DataReference data;
@@ -36,25 +34,53 @@ public class MonopolyModel extends Observable {
      * This will change the data to the next player. calls resetCounters.
      */
     public void nextPlayer() {
-        if (this.data.currentPlayer == this.newGame.getPlayers().length) {
+        int players = this.data.game.getPlayers().length;
+        
+        if (this.data.currentPlayer == (players - 1)) {
             this.data.currentPlayer = 0;
         } else {
             this.data.currentPlayer++;
         }
-        resetCounters();
         this.setChanged();
         this.notifyObservers(data);
     }
-    
-    public void rollToMove(){
+
+    /**
+     * This is for deciding how many times a player should move, with a random
+     * number generator from 1 to 6.
+     */
+    public void rollToMove() {
         roll = new DiceRoll();
-        
+
         int dieRoll = roll.diceRoll();
-        
+
         this.data.die = dieRoll;
         this.data.dieRoll = true;
+        this.data.hasRolled = true;
+
+        for (int i = 0; i < dieRoll; i++) {
+            this.movePlayer();
+        }
+
         this.setChanged();
         this.notifyObservers(data);
+    }
+
+    /**
+     * This method moves the player up one position, if the player is at
+     * position 15 It will move the player to the starting position.
+     */
+    public void movePlayer() {
+        int currentLocation = this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getLocationID();
+        int nextLocation;
+
+        if (currentLocation == 15) {
+            nextLocation = this.data.game.getLocations()[0].getLocationID();
+            this.data.game.getPlayers()[this.data.currentPlayer].setCurrentLocation(this.data.game.getLocations()[nextLocation]);
+        } else {
+            nextLocation = this.data.game.getLocations()[currentLocation + 1].getLocationID();
+            this.data.game.getPlayers()[this.data.currentPlayer].setCurrentLocation(this.data.game.getLocations()[nextLocation]);
+        }
     }
 
     /**
@@ -64,9 +90,12 @@ public class MonopolyModel extends Observable {
         this.data.upgradeAsset = false;
         this.data.dieRoll = false;
         this.data.die = 0;
+        this.data.hasRolled = false;
         this.data.sellAsset = false;
-        this.data.upgradeAssetCounter = 0;
-        this.data.sellAssetCounter = 0;
+        this.data.successPurchase = false;
+        this.data.playerChance = false;
+        this.data.paytogetout = false;
+        this.data.chanceRoll = 0;
     }
 
     /**
@@ -74,6 +103,12 @@ public class MonopolyModel extends Observable {
      */
     public void upgradeAssetMenu() {
         this.data.upgradeAsset = true;
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    public void sellAssetMenu() {
+        this.data.sellAsset = true;
         this.setChanged();
         this.notifyObservers(data);
     }
@@ -88,6 +123,8 @@ public class MonopolyModel extends Observable {
 
         this.data.game.getPlayers()[this.data.currentPlayer].setAsset(this.data.game.getAssets()[locationID]); //set asset to player
         this.data.game.getAssets()[locationID].setOwner(playerName); //set owner of the asset.
+        this.chargePlayer(this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().cloneObject().getPrice());
+        this.data.successPurchase = true;
         this.setChanged();
         this.notifyObservers(data);
     }
@@ -100,14 +137,16 @@ public class MonopolyModel extends Observable {
      */
     public boolean upgradeAssetConfirm(String assetName) {
         boolean successUpgrade = false;
-        this.data.upgradeAssetCounter = 1; //this will make it so a player can only upgrade once
         for (int i = 0; i < this.data.game.getPlayers()[this.data.currentPlayer].getAsset().length; i++) {
-            if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].getBoardPosition().getName().contains(assetName)) { // checking for a match.
-                if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].getLevel() == 4) { //if the asset is already at level 4 it will return false
-                    successUpgrade = false;
-                } else {
-                    this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].setLevel(); // upgrading the level
-                    successUpgrade = true; //returning true after a successful upgrade.
+            if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i] != null) {
+                if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].getBoardPosition().getName().contains(assetName)) { // checking for a match.
+                    if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].getLevel() == 3) { //if the asset is already at level 4 it will return false
+                        successUpgrade = false;
+                    } else {
+                        this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].setLevel(); // upgrading the level
+                        this.chargePlayer(5000);
+                        successUpgrade = true; //returning true after a successful upgrade.
+                    }
                 }
             }
         }
@@ -124,6 +163,8 @@ public class MonopolyModel extends Observable {
      */
     public void chargePlayer(int amount) {
         this.data.game.getPlayers()[this.data.currentPlayer].setMoney(this.data.game.getPlayers()[this.data.currentPlayer].getMoney() - amount);
+        this.setChanged();
+        this.notifyObservers(data);
     }
 
     /**
@@ -133,13 +174,28 @@ public class MonopolyModel extends Observable {
      */
     public void payPlayer(int amount) {
         this.data.game.getPlayers()[this.data.currentPlayer].setMoney(this.data.game.getPlayers()[this.data.currentPlayer].getMoney() + amount);
+        this.setChanged();
+        this.notifyObservers(data);
     }
 
-    public boolean purchaseble() {
+    public void payOtherPlayer(int amount, int player) {
+        this.data.game.getPlayers()[player].setMoney(this.data.game.getPlayers()[player].getMoney() + amount);
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    /**
+     * Checks if the current location is purchasable.
+     *
+     * @return
+     */
+    public boolean purchasable() {
         boolean trueIfPurchaseble = false;
 
-        if (this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getClass().toString().contains("class monopoly.HousingLocation") ){
-            trueIfPurchaseble = true;
+        if (this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getClass().toString().contains("class monopoly.HousingLocation")) {
+            if (this.data.game.getAssets()[this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getLocationID()].getOwner() == null) {
+                trueIfPurchaseble = true;
+            }
         }
         return trueIfPurchaseble;
     }
@@ -162,6 +218,186 @@ public class MonopolyModel extends Observable {
         return stats;
     }
 
+    public void sellAsset(String assetName) {
+        for (int i = 0; i < this.data.game.getPlayers()[this.data.currentPlayer].getAsset().length; i++) {
+            if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i] != null) {
+                if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].getBoardPosition().getName().contains(assetName)) { // checking for a match.
+                    this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i].setOwner(null);
+                    this.data.game.getPlayers()[this.data.currentPlayer].sellAsset(this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i]);
+                    this.payPlayer(5000);
+                }
+            }
+        }
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    public void movePlayerToJail() {
+        int currentLocation = this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getLocationID();
+
+        if (currentLocation > 8) {
+            this.data.game.getPlayers()[this.data.currentPlayer].setCurrentLocation(this.data.game.getLocations()[8]);
+        } else if (currentLocation < 8) {
+            this.data.game.getPlayers()[this.data.currentPlayer].setCurrentLocation(this.data.game.getLocations()[4]);
+        }
+        this.data.game.getPlayers()[this.data.currentPlayer].setJailState(true);
+        this.data.game.getPlayers()[this.data.currentPlayer].setJailCounter(0);
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    public void movePlayerOutOfJail() {
+        this.movePlayer();
+        this.data.game.getPlayers()[this.data.currentPlayer].setJailState(false);
+        this.data.game.getPlayers()[this.data.currentPlayer].setJailCounter(0);
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    public boolean playerInJail() {
+        boolean inJail = false;
+
+        if (this.data.game.getPlayers()[this.data.currentPlayer].isJailState()) {
+            inJail = true;
+        } else {
+            inJail = false;
+        }
+        return inJail;
+    }
+
+    public boolean playerInChance() {
+        boolean chance = false;
+
+        if (this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getClass().toString().contains("class monopoly.ChanceLocation")) {
+            chance = true;
+        } else {
+            chance = false;
+        }
+        return chance;
+    }
+
+    public void payToGetOutOfJail() {
+        this.data.paytogetout = true;
+        this.chargePlayer(10000);
+        this.movePlayerOutOfJail();
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    public void jailCounterIncrease() {
+        int jailCounter = this.data.game.getPlayers()[this.data.currentPlayer].getJailCounter();
+
+        if (jailCounter > 3) {
+            this.data.game.getPlayers()[this.data.currentPlayer].setJailCounter(jailCounter + 1);
+        }
+        this.setChanged();
+        this.notifyObservers(data);
+    }
+
+    public void rollToGetOutOfJail() {
+        roll = new DiceRoll();
+        int dieRoll = roll.diceRoll();
+        this.data.jailDie = dieRoll;
+        this.data.hasRolled = true;
+
+        this.setChanged();
+        this.notifyObservers(data);
+        if (dieRoll == 6) {
+            this.movePlayerOutOfJail();
+        } else {
+            int jailCounter = this.data.game.getPlayers()[this.data.currentPlayer].getJailCounter();
+
+            if (jailCounter == 3) {
+                this.movePlayerOutOfJail();
+            } else {
+                this.jailCounterIncrease();
+            }
+        }
+    }
+
+    public void rollForChance() {
+        DiceRoll die = new DiceRoll();
+
+        this.data.chanceRoll = die.diceRoll();
+        this.data.hasRolled = true;
+        this.setChanged();
+        this.notifyObservers(data);
+
+        if (this.data.chanceRoll <= 2) {
+            this.payPlayer(5000);
+            this.movePlayer();
+        } else if (this.data.chanceRoll > 2 && this.data.chanceRoll < 6) {
+            this.chargePlayer(5000);
+            this.movePlayer();
+        } else {
+            this.movePlayerToJail();
+        }
+    }
+
+    public String playerHasRolled() {
+        String message = "You have already rolled this turn, you will not be allowed to roll again.";
+
+        return message;
+    }
+
+    public String notPurchaseble() {
+        String message = "This location is either not purchaseble or already owned\n please try a different Menu\n";
+        message += this.displayPlayer();
+        return message;
+    }
+
+    public String upgradeCompleted() {
+        String message = "Successful upgraded the location\n";
+        message += this.displayPlayer();
+        return message;
+    }
+
+    public String upgradeFailed() {
+        String message = "The upgrade could not complete, either you don't have enough money or it is already at max level (4)\n";
+        message += this.displayPlayer();
+        return message;
+    }
+    
+    
+    public boolean playerPaysRent() {
+        boolean pays = false;
+        int currentLocationID = this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getLocationID();
+        for (int player = 0; player < this.data.game.getPlayers().length; player++) {
+            if (player != this.data.currentPlayer) {
+                for (int k = 0; k < 16; k++) {
+                    if (this.data.game.getPlayers()[player].getAsset()[k] != null) {
+                        if (this.data.game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getLocationID() == currentLocationID) {
+                            int amount = this.data.game.getPlayers()[player].getAsset()[k].getBoardPosition().cloneObject().getRentPrice();
+                            this.chargePlayer(amount);
+                            this.payOtherPlayer(amount, player);
+                            pays = true;
+                        }
+                    }
+                }
+            }
+        }
+        return pays;
+    }
+    
+    public boolean balanceCheck(){
+        boolean check = false;
+        if (this.data.game.getPlayers()[this.data.currentPlayer].getMoney() <= 0){
+            check = true;
+            this.data.game.getPlayers()[this.data.currentPlayer].setInGame(false);
+        } else {
+            check = false;
+        }
+        return check;
+    }
+    
+    
+    
+    public String payRent(){
+        String message = "you landed in someone else's property\n your account has been charged 5000\n";
+        message += this.displayPlayer();
+        return message;
+    }
+
     /**
      * This is for the player to know the instructions of the game.
      *
@@ -180,5 +416,12 @@ public class MonopolyModel extends Observable {
         instructions += "Game will automatically save after each dice roll.\n";
         instructions += "------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
         return instructions;
+    }
+
+    public String displayPlayer() {
+        String currentPlayer = this.data.game.getPlayers()[this.data.currentPlayer].getName() + "'s turn \n";
+        currentPlayer += "Cash $" + this.data.game.getPlayers()[this.data.currentPlayer].getMoney() + "\n";
+        currentPlayer += "Current Location: " + this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().toString();
+        return currentPlayer;
     }
 }

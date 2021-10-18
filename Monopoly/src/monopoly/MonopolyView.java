@@ -28,6 +28,8 @@ public class MonopolyView extends JFrame implements Observer {
     private JPanel panelThree = new JPanel();
     private JPanel panelFour = new JPanel();
     private JPanel panelFive = new JPanel();
+    private JPanel textAreaPanel = new JPanel();
+    private JPanel buttonPanel = new JPanel();
 
     //JButtons
     public JButton buttonOne = new JButton();
@@ -86,6 +88,7 @@ public class MonopolyView extends JFrame implements Observer {
     public JTextArea textArea = new JTextArea();
 
     public MonopolyView() {
+        super("Monopoly");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setScreenSize(this);
         this.setLocationRelativeTo(null);
@@ -120,53 +123,66 @@ public class MonopolyView extends JFrame implements Observer {
     }
 
     public void jailPanel() {
-        panelOne.removeAll();
+        textAreaPanel.removeAll();
+        buttonPanel.removeAll();
 
         buttonOne.setText("Roll for freedom");
         buttonTwo.setText("Pay your way out");
-        textArea.setText("You are in Jail\n Roll for freedom, if you land a 6 you're out \n Or you can pay your way out \n After 3 rolls you're out of jail");
+        buttonThree.setText("Next Player");
+        textArea.setText("You are in Jail\n Roll for freedom, if you land a 6 you're out \n Or you can pay your way out, it costs $10000\n After 3 rolls you're out of jail");
 
-        panelOne.add(textArea, BorderLayout.PAGE_START);
-        panelOne.add(buttonOne, BorderLayout.CENTER);
-        panelOne.add(buttonTwo, BorderLayout.CENTER);
+        textAreaPanel.add(textArea, BorderLayout.PAGE_START);
+        buttonPanel.add(buttonOne, BorderLayout.CENTER);
+        buttonPanel.add(buttonTwo, BorderLayout.CENTER);
+        buttonPanel.add(buttonThree, BorderLayout.CENTER);
 
         this.getContentPane().removeAll();
-        panelOne.setVisible(true);
-        this.add(panelOne, BorderLayout.CENTER);
+        textAreaPanel.setVisible(true);
+        buttonPanel.setVisible(true);
+        this.add(textAreaPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.CENTER);
         this.revalidate();
         this.repaint();
     }
 
-    public void chancePanel(String chance) {
-        panelOne.removeAll();
+    public void chancePanel() {
+        textAreaPanel.removeAll();
+        buttonPanel.removeAll();
 
-        textArea.setText(chance);
+        textArea.setText("You have landed in a chance location, roll to see your destiny");
+        buttonTwo.setText("Roll for chance");
 
-        panelOne.add(textArea, BorderLayout.CENTER);
+        textAreaPanel.add(textArea, BorderLayout.PAGE_START);
+        buttonPanel.add(buttonTwo, BorderLayout.CENTER);
 
         this.getContentPane().removeAll();
-        panelOne.setVisible(true);
-        this.add(panelOne, BorderLayout.CENTER);
+        textAreaPanel.setVisible(true);
+        buttonPanel.setVisible(true);
+        this.add(textAreaPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.PAGE_END);
         this.revalidate();
         this.repaint();
     }
 
     public void menuRoll() {
-        //TODO roll menu buttons implementation
-        panelOne.removeAll();
+        textAreaPanel.removeAll();
+        buttonPanel.removeAll();
 
         buttonOne.setText("Roll");
-        buttonTwo.setText("Back");
+        buttonTwo.setText("Next Player");
         textArea.setText("Press the Roll button to roll");
+        textArea.setSize(new Dimension(200, 100));
 
-        panelOne.add(diceRollIcon, BorderLayout.NORTH);
-        panelOne.add(textArea, BorderLayout.CENTER);
-        panelOne.add(buttonOne, BorderLayout.SOUTH);
-        panelOne.add(buttonTwo, BorderLayout.SOUTH);
+        textAreaPanel.add(diceRollIcon, BorderLayout.LINE_START);
+        textAreaPanel.add(textArea, BorderLayout.CENTER);
+        buttonPanel.add(buttonOne, BorderLayout.CENTER);
+        buttonPanel.add(buttonTwo, BorderLayout.CENTER);
 
         this.getContentPane().removeAll();
-        panelOne.setVisible(true);
-        this.add(panelOne, BorderLayout.CENTER);
+        textAreaPanel.setVisible(true);
+        buttonPanel.setVisible(true);
+        this.add(textAreaPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.PAGE_END);
         this.revalidate();
         this.repaint();
     }
@@ -230,7 +246,7 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
-    public void gameBoard() {
+    public void gameBoard(String player) {
         this.getContentPane().removeAll();
         this.setLayout(new BorderLayout(8, 6));
         this.setBackground(Color.CYAN);
@@ -286,6 +302,7 @@ public class MonopolyView extends JFrame implements Observer {
         panelFive.removeAll();
         panelFive.setBorder(new LineBorder(Color.BLACK, 3));
         panelFive.setLayout(new GridBagLayout());
+        textArea.setText(player);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -368,14 +385,7 @@ public class MonopolyView extends JFrame implements Observer {
         panel.setResizable(false);
     }
 
-    public String displayPlayer(DataReference game) {
-        String currentPlayer = game.game.getPlayers()[game.currentPlayer].getName() + "'s turn \n";
-        currentPlayer += "Cash $" + game.game.getPlayers()[game.currentPlayer].getMoney() + "\n";
-        currentPlayer += "Current Location: " + game.game.getPlayers()[game.currentPlayer].getCurrentLocation().toString();
-        return currentPlayer;
-    }
-
-    public void displayAssets(DataReference game){
+    public void displayAssets(DataReference game) {
         ArrayList<String> assetList = new ArrayList<>();
 
         for (int i = 0; i < game.game.getPlayers()[game.currentPlayer].getAsset().length; i++) {
@@ -392,14 +402,61 @@ public class MonopolyView extends JFrame implements Observer {
         assetSelect.setModel(mod);
 
     }
-    
-    public String displayRoll(DataReference game){
+
+    public String displayRoll(DataReference game) {
         String playerName = game.game.getPlayers()[game.currentPlayer].getName();
-        String dieRoll = playerName +" has Rolled a "+ game.die + "\n";
+        String dieRoll = playerName + " has Rolled a " + game.die + "\n";
         int currentLocation = game.game.getPlayers()[game.currentPlayer].getCurrentLocation().getLocationID();
-        String nextLocation = game.game.getLocations()[currentLocation + game.die - 1].getName();
-        dieRoll += "The player will move to "+ nextLocation;
+        String nextLocation = game.game.getLocations()[currentLocation].getName();
+        dieRoll += "The player will move to " + nextLocation;
         return dieRoll;
+    }
+
+    public String successfulPurchase(DataReference game) {
+        String player = game.game.getPlayers()[game.currentPlayer].getName();
+        String money = Integer.toString(game.game.getPlayers()[game.currentPlayer].getMoney());
+        String location = game.game.getPlayers()[game.currentPlayer].getCurrentLocation().getName();
+        String message = player + " has successfully purchased " + location + ".\n" + player + " currently has " + money + " left after making this purchase.";
+
+        return message;
+    }
+
+    public String displayJail(DataReference game) {
+        String message = "";
+        String player = game.game.getPlayers()[game.currentPlayer].getName();
+
+        int dieRoll = game.jailDie;
+        message = player + " has rolled a ";
+
+        if (dieRoll == 6) {
+            message += dieRoll + " you are free to go";
+        } else {
+            message += dieRoll;
+            int jailCounter = game.game.getPlayers()[game.currentPlayer].getJailCounter();
+
+            if (jailCounter == 3) {
+                message += ". Since you have rolled 3 times unsuccesfully you are not free to go, next turn you are out.";
+            } else {
+                message += ". you are unlucky, try again next turn";
+            }
+        }
+        return message;
+    }
+
+    public void changeText(String message) {
+        textArea.setText(message);
+    }
+
+    public String payToGetOutMessage(DataReference game) {
+        String message = "You have succesfully payed your way out of jail";
+        return message;
+    }
+
+    public String chanceMessage(DataReference game) {
+        String player = game.game.getPlayers()[game.currentPlayer].getName();
+        String message = player + " has rolled a " + game.chanceRoll + "\n";
+
+        return message;
     }
 
     @Override
@@ -411,18 +468,22 @@ public class MonopolyView extends JFrame implements Observer {
             displayAssets(game);
         } else if (game.dieRoll) {
             textArea.setText(displayRoll(game));
-        } else {
-            textArea.setText(displayPlayer(game));
+        } else if (game.successPurchase) {
+            textArea.setText(successfulPurchase(game));
+        } else if (game.game.getPlayers()[game.currentPlayer].isJailState()) {
+            textArea.setText(displayJail(game));
+        } else if (game.paytogetout) {
+            textArea.setText(payToGetOutMessage(game));
+        } else if (game.playerChance) {
+
         }
     }
 
     public void addActionListener(ActionListener listen) {
-        //JButton
         buttonOne.addActionListener(listen);
         buttonTwo.addActionListener(listen);
         buttonThree.addActionListener(listen);
         buttonFour.addActionListener(listen);
-        //assetSelect.addActionListener(listen);
     }
 
 }
