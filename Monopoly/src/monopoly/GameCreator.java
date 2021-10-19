@@ -17,12 +17,18 @@ public class GameCreator implements java.io.Serializable {
         this.players = new Player[numberOfPlayers];
         this.assets = new Assets[16];
     }
+    
+    public GameCreator(Player[] players){
+        this.locations = new GlobalLocation[16];
+        this.players = players;
+        this.assets = new Assets[16];
+    }
 
     /**
      * This method is in charge of creating a list of assets.
      */
     public void createAssets() {
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 16; i++) {
             if (this.locations[i].cloneObject() != null) {
                 this.assets[i] = new Assets(this.locations[i], 0);
             }
@@ -42,7 +48,7 @@ public class GameCreator implements java.io.Serializable {
     }
 
     /**
-     * This method loads players back up from a save TODO: May need to change
+     * This method loads players back up from a save
      * the logic of this, instead of just giving the player object it could just
      * create a new one.
      *

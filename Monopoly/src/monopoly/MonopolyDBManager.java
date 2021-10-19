@@ -12,12 +12,6 @@ import java.sql.Statement;
  * @author Sean Simpkins - 20105546
  */
 public class MonopolyDBManager {
-    // maybe the users can have different games so if they played a 2 player game they can save it to their own save.
-    //Have a look at the H01_DBanager.java file for more info.
-    //Have a look at H_RetrieveAll.
-
-    //private static String userName;
-    //private static String password;
     private static final String URL = "jdbc:derby:Monopoly_GameSave; create=true";
 
     Connection conn;
@@ -35,6 +29,7 @@ public class MonopolyDBManager {
                 this.conn = DriverManager.getConnection(URL);
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
+                System.out.println(ex.getNextException());
             }
         }
     }
@@ -60,6 +55,7 @@ public class MonopolyDBManager {
 
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
+            System.out.println(ex.getNextException());
         }
         return resultSet;
     }

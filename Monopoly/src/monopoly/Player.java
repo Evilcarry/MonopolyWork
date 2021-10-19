@@ -13,7 +13,6 @@ public class Player implements PlayerInterface, java.io.Serializable {
     private int jailCounter;
     private boolean jailState;
     private Assets[] asset;
-    private int rounds;
     private boolean inGame;
     private boolean paidThisRound;
 
@@ -23,20 +22,19 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.currentLocation = currentLocation;
         this.jailCounter = 0;
         this.jailState = false;
-        this.asset = new Assets[24];
-        this.rounds = 0;
+        this.asset = new Assets[16];
         this.inGame = true;
         this.paidThisRound = false;
     }
     
-    public Player(String name, int money, GlobalLocation currentLocation, int jailCounter, boolean jailState, Assets[] asset, int rounds, boolean inGame, boolean paidThisRound){
+    public Player(String name, int money, GlobalLocation currentLocation, int jailCounter, boolean jailState, Assets[] asset, boolean inGame, boolean paidThisRound){
         this.name = name;
         this.money = money;
         this.currentLocation = currentLocation;
         this.jailCounter = jailCounter;
         this.jailState = jailState;
         this.asset = asset;
-        this.rounds = rounds;
+
         this.inGame = inGame;
         this.paidThisRound = paidThisRound;
     }
@@ -55,14 +53,6 @@ public class Player implements PlayerInterface, java.io.Serializable {
 
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
-    }
-
-    public int getRounds() {
-        return rounds;
-    }
-
-    public void setRounds(int rounds) {
-        this.rounds = rounds;
     }
 
     public Assets[] getAsset() {
@@ -114,50 +104,6 @@ public class Player implements PlayerInterface, java.io.Serializable {
     }
 
     /**
-     * This method moves a player to a different location, based on the dice
-     * roll or if they are sent to jail.
-     *
-     * @param location
-     */
-    @Override
-    public void movePlayer(GlobalLocation location) {
-        this.currentLocation = location;
-    }
-
-    /**
-     * This method pays the player a certain amount of money, based on a chance
-     * card or go location.
-     *
-     * @param money
-     */
-    @Override
-    public void payPlayer(int money) {
-        this.money += money;
-    }
-
-    /**
-     * This method charges the player a certain amount of money, based on a
-     * chance card or if they purchased an asset..
-     *
-     * @param money
-     */
-    @Override
-    public void chargePlayer(int money) {
-        this.money -= money;
-    }
-
-    /**
-     * This method is used when the player purchases a new asset.
-     *
-     * @param asset
-     */
-    @Override
-    public void purchaseAsset(Assets asset) {
-        this.asset[this.currentLocation.getLocationID()] = asset;
-        this.setMoney(this.getMoney() - this.currentLocation.cloneObject().getPrice());
-    }
-
-    /**
      * This method is used when selling an asset.
      * @param asset 
      */
@@ -167,45 +113,8 @@ public class Player implements PlayerInterface, java.io.Serializable {
         this.setMoney(this.getMoney() + this.currentLocation.cloneObject().getSellPrice());
     }
 
-    /**
-     * TODO REMOVE.
-     * This method is used when upgrading an asset
-     * @param asset
-     * @param level 
-     */
-    @Override
-    public void upgradeAsset(Assets asset, int level) {
-        for (int i = 0; i < level; i++) {
-            this.asset[asset.getBoardPosition().getLocationID()].setLevel();
-            this.setMoney(this.getMoney() - asset.getBoardPosition().cloneObject().getPrice());
-        }
-    }
-
-    /**
-     * This method is to move a player to jail.
-     * It also sets the jailState to true and jailCounter to 0
-     * @param location 
-     */
-    @Override
-    public void moveToJail(GlobalLocation location) {
-        this.setJailCounter(0);
-        this.setJailState(true);
-        this.setCurrentLocation(location);
-    }
-
-    /**
-     * This method is to move a player out of jail.
-     * It also sets the jailState to false and jailCounter to 0.
-     * @param location 
-     */
-    public void moveOutOfJail(GlobalLocation location) {
-        this.setJailCounter(0);
-        this.setJailState(false);
-        this.setCurrentLocation(location);
-    }
-
     @Override
     public String toString() {
-        return name + " currently has " + money + " dollars. Currently standing at " + currentLocation + ", rounds: " + rounds;
+        return name + " currently has " + money + " dollars. Currently standing at " + currentLocation;
     }
 }

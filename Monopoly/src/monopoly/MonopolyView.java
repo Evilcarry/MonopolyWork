@@ -17,8 +17,10 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 /**
+ * Project ID: 10 - Monopoly
  *
- * @author benjh
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class MonopolyView extends JFrame implements Observer {
 
@@ -28,6 +30,8 @@ public class MonopolyView extends JFrame implements Observer {
     private JPanel panelThree = new JPanel();
     private JPanel panelFour = new JPanel();
     private JPanel panelFive = new JPanel();
+    private JPanel textAreaPanel = new JPanel();
+    private JPanel buttonPanel = new JPanel();
 
     //JButtons
     public JButton buttonOne = new JButton();
@@ -85,7 +89,11 @@ public class MonopolyView extends JFrame implements Observer {
     public JTextField fieldFour = new JTextField();
     public JTextArea textArea = new JTextArea();
 
+    /**
+     * This constructor sets up the main Jframe.
+     */
     public MonopolyView() {
+        super("Monopoly");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setScreenSize(this);
         this.setLocationRelativeTo(null);
@@ -102,6 +110,9 @@ public class MonopolyView extends JFrame implements Observer {
         this.setVisible(true);
     }
 
+    /**
+     * This panel is responsible of allowing the user to select the amount of players.
+     */
     public void newGamePanel() {
         textDisplay = new JLabel("Choose the amount of players you want in your game");
         buttonOne.setText("2");
@@ -119,60 +130,84 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is to be displayed when a player goes to jail.
+     */
     public void jailPanel() {
-        panelOne.removeAll();
+        textAreaPanel.removeAll();
+        buttonPanel.removeAll();
 
         buttonOne.setText("Roll for freedom");
         buttonTwo.setText("Pay your way out");
-        textArea.setText("You are in Jail\n Roll for freedom, if you land a 6 you're out \n Or you can pay your way out \n After 3 rolls you're out of jail");
+        buttonThree.setText("Next Player");
+        textArea.setText("You are in Jail\n Roll for freedom, if you land a 6 you're out \n Or you can pay your way out, it costs $10000\n After 3 rolls you're out of jail");
 
-        panelOne.add(textArea, BorderLayout.PAGE_START);
-        panelOne.add(buttonOne, BorderLayout.CENTER);
-        panelOne.add(buttonTwo, BorderLayout.CENTER);
+        textAreaPanel.add(textArea, BorderLayout.PAGE_START);
+        buttonPanel.add(buttonOne, BorderLayout.CENTER);
+        buttonPanel.add(buttonTwo, BorderLayout.CENTER);
+        buttonPanel.add(buttonThree, BorderLayout.CENTER);
 
         this.getContentPane().removeAll();
-        panelOne.setVisible(true);
-        this.add(panelOne, BorderLayout.CENTER);
+        textAreaPanel.setVisible(true);
+        buttonPanel.setVisible(true);
+        this.add(textAreaPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.CENTER);
         this.revalidate();
         this.repaint();
     }
 
-    public void chancePanel(String chance) {
-        panelOne.removeAll();
+    /**
+     * This panel is to be displayed when a player lands on a chance card.
+     */
+    public void chancePanel() {
+        textAreaPanel.removeAll();
+        buttonPanel.removeAll();
 
-        textArea.setText(chance);
+        textArea.setText("You have landed in a chance location, roll to see your destiny");
+        buttonTwo.setText("Roll for chance");
 
-        panelOne.add(textArea, BorderLayout.CENTER);
+        textAreaPanel.add(textArea, BorderLayout.PAGE_START);
+        buttonPanel.add(buttonTwo, BorderLayout.CENTER);
 
         this.getContentPane().removeAll();
-        panelOne.setVisible(true);
-        this.add(panelOne, BorderLayout.CENTER);
+        textAreaPanel.setVisible(true);
+        buttonPanel.setVisible(true);
+        this.add(textAreaPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.PAGE_END);
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * This panel is displayed when a player wants to roll the die.
+     */
     public void menuRoll() {
-        //TODO roll menu buttons implementation
-        panelOne.removeAll();
+        textAreaPanel.removeAll();
+        buttonPanel.removeAll();
 
         buttonOne.setText("Roll");
-        buttonTwo.setText("Back");
+        buttonTwo.setText("Next Player");
         textArea.setText("Press the Roll button to roll");
+        textArea.setSize(new Dimension(200, 100));
 
-        panelOne.add(diceRollIcon, BorderLayout.NORTH);
-        panelOne.add(textArea, BorderLayout.CENTER);
-        panelOne.add(buttonOne, BorderLayout.SOUTH);
-        panelOne.add(buttonTwo, BorderLayout.SOUTH);
+        textAreaPanel.add(diceRollIcon, BorderLayout.LINE_START);
+        textAreaPanel.add(textArea, BorderLayout.CENTER);
+        buttonPanel.add(buttonOne, BorderLayout.CENTER);
+        buttonPanel.add(buttonTwo, BorderLayout.CENTER);
 
         this.getContentPane().removeAll();
-        panelOne.setVisible(true);
-        this.add(panelOne, BorderLayout.CENTER);
+        textAreaPanel.setVisible(true);
+        buttonPanel.setVisible(true);
+        this.add(textAreaPanel, BorderLayout.CENTER);
+        this.add(buttonPanel, BorderLayout.PAGE_END);
         this.revalidate();
         this.repaint();
     }
 
+    /**
+     * This panel is for selling a property.
+     */
     public void menuSell() {
-        //TODO new layout
         panelTwo.removeAll();
 
         buttonOne.setText("Back");
@@ -191,8 +226,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is for upgrading a property.
+     */
     public void menuUpgrade() {
-        //TODO new layout.
         panelThree.removeAll();
 
         buttonOne.setText("Back");
@@ -211,8 +248,11 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is for buying a property.
+     * @param stats it needs the player details.
+     */
     public void menuBuy(String stats) {
-        //TODO new layout
         panelTwo.removeAll();
 
         buttonOne.setText("Back");
@@ -229,8 +269,28 @@ public class MonopolyView extends JFrame implements Observer {
         this.revalidate();
         this.repaint();
     }
+    
+    /**
+     * This panel is to be displayed when all players run out of money.
+     * @param winner 
+     */
+    public void winnerPanel(String winner){
+        panelThree.removeAll();
+        
+        textArea.setText(winner);
+        
+        this.getContentPane().removeAll();
+        panelThree.setVisible(true);
+        this.add(panelThree, BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
+    }
 
-    public void gameBoard() {
+    /**
+     * This is the main panel board, sets up the board to display the monopoly board.
+     * @param player 
+     */
+    public void gameBoard(String player) {
         this.getContentPane().removeAll();
         this.setLayout(new BorderLayout(8, 6));
         this.setBackground(Color.CYAN);
@@ -286,6 +346,7 @@ public class MonopolyView extends JFrame implements Observer {
         panelFive.removeAll();
         panelFive.setBorder(new LineBorder(Color.BLACK, 3));
         panelFive.setLayout(new GridBagLayout());
+        textArea.setText(player);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -312,6 +373,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is to be shown after the users chooses the amount of players.
+     * @param numberOfPlayers 
+     */
     public void chooseNamePanel(int numberOfPlayers) {
         textDisplay = new JLabel("Write down the names of each player");
         buttonOne.setText("Confirm");
@@ -340,15 +405,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
-    public void loadGamePanel() {
-        //TODO: Need to think what to do here, Ideally a user has a save with a name.
-        //Would need to pull the data from the db send it to here thru the controller.
-        //This would only send back the saves, We can put them in a button.
-        //After that it would call a different panel for the stats of the players.
-        //https://docs.oracle.com/javase/tutorial/uiswing/components/table.html
-        //For more info on JTable
-    }
-
+    /**
+     * This panel is to display the instructions.
+     * @param instructions 
+     */
     public void instructionPanel(String instructions) {
         textArea = new JTextArea(instructions);
         textArea.setEditable(false);
@@ -363,19 +423,20 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * Method to set the screen size.
+     * @param panel 
+     */
     private void setScreenSize(JFrame panel) {
         panel.setSize(1030, 827);
         panel.setResizable(false);
     }
 
-    public String displayPlayer(DataReference game) {
-        String currentPlayer = game.game.getPlayers()[game.currentPlayer].getName() + "'s turn \n";
-        currentPlayer += "Cash $" + game.game.getPlayers()[game.currentPlayer].getMoney() + "\n";
-        currentPlayer += "Current Location: " + game.game.getPlayers()[game.currentPlayer].getCurrentLocation().toString();
-        return currentPlayer;
-    }
-
-    public void displayAssets(DataReference game){
+    /**
+     * This method helps to display the assets.
+     * @param game 
+     */
+    public void displayAssets(DataReference game) {
         ArrayList<String> assetList = new ArrayList<>();
 
         for (int i = 0; i < game.game.getPlayers()[game.currentPlayer].getAsset().length; i++) {
@@ -392,16 +453,97 @@ public class MonopolyView extends JFrame implements Observer {
         assetSelect.setModel(mod);
 
     }
-    
-    public String displayRoll(DataReference game){
+
+    /**
+     * This is to display the roll.
+     * @param game
+     * @return 
+     */
+    public String displayRoll(DataReference game) {
         String playerName = game.game.getPlayers()[game.currentPlayer].getName();
-        String dieRoll = playerName +" has Rolled a "+ game.die + "\n";
+        String dieRoll = playerName + " has Rolled a " + game.die + "\n";
         int currentLocation = game.game.getPlayers()[game.currentPlayer].getCurrentLocation().getLocationID();
-        String nextLocation = game.game.getLocations()[currentLocation + game.die - 1].getName();
-        dieRoll += "The player will move to "+ nextLocation;
+        String nextLocation = game.game.getLocations()[currentLocation].getName();
+        dieRoll += "The player will move to " + nextLocation;
         return dieRoll;
     }
 
+    /**
+     * Update message to let the user know the have purchased a property.
+     * @param game
+     * @return 
+     */
+    public String successfulPurchase(DataReference game) {
+        String player = game.game.getPlayers()[game.currentPlayer].getName();
+        String money = Integer.toString(game.game.getPlayers()[game.currentPlayer].getMoney());
+        String location = game.game.getPlayers()[game.currentPlayer].getCurrentLocation().getName();
+        String message = player + " has successfully purchased " + location + ".\n" + player + " currently has " + money + " left after making this purchase.";
+
+        return message;
+    }
+
+    /**
+     * this is the message to be displayed in jail, it returns the string.
+     * @param game
+     * @return 
+     */
+    public String displayJail(DataReference game) {
+        String message = "";
+        String player = game.game.getPlayers()[game.currentPlayer].getName();
+
+        int dieRoll = game.jailDie;
+        message = player + " has rolled a ";
+
+        if (dieRoll == 6) {
+            message += dieRoll + " you are free to go";
+        } else {
+            message += dieRoll;
+            int jailCounter = game.game.getPlayers()[game.currentPlayer].getJailCounter();
+
+            if (jailCounter == 3) {
+                message += ". Since you have rolled 3 times unsuccesfully you are not free to go, next turn you are out.";
+            } else {
+                message += ". you are unlucky, try again next turn";
+            }
+        }
+        return message;
+    }
+
+    /**
+     * This facilitates displaying messages through the controller.
+     * @param message 
+     */
+    public void changeText(String message) {
+        textArea.setText(message);
+    }
+
+    /**
+     * this method returns a string, to be displayed if a player pays their way out of jail.
+     * @param game
+     * @return 
+     */
+    public String payToGetOutMessage(DataReference game) {
+        String message = "You have succesfully payed your way out of jail";
+        return message;
+    }
+
+    /**
+     * This method returns a string, to be displayed when a player rolls for a chance.
+     * @param game
+     * @return 
+     */
+    public String chanceMessage(DataReference game) {
+        String player = game.game.getPlayers()[game.currentPlayer].getName();
+        String message = player + " has rolled a " + game.chanceRoll + "\n";
+
+        return message;
+    }
+
+    /**
+     * updates panels through the observer.
+     * @param o
+     * @param arg 
+     */
     @Override
     public void update(Observable o, Object arg) {
         DataReference game = (DataReference) arg;
@@ -411,18 +553,26 @@ public class MonopolyView extends JFrame implements Observer {
             displayAssets(game);
         } else if (game.dieRoll) {
             textArea.setText(displayRoll(game));
-        } else {
-            textArea.setText(displayPlayer(game));
+        } else if (game.successPurchase) {
+            textArea.setText(successfulPurchase(game));
+        } else if (game.game.getPlayers()[game.currentPlayer].isJailState()) {
+            textArea.setText(displayJail(game));
+        } else if (game.paytogetout) {
+            textArea.setText(payToGetOutMessage(game));
+        } else if (game.playerChance) {
+
         }
     }
 
+    /**
+     * Action listeners for the buttons.
+     * @param listen 
+     */
     public void addActionListener(ActionListener listen) {
-        //JButton
         buttonOne.addActionListener(listen);
         buttonTwo.addActionListener(listen);
         buttonThree.addActionListener(listen);
         buttonFour.addActionListener(listen);
-        //assetSelect.addActionListener(listen);
     }
 
 }
