@@ -17,6 +17,7 @@ public class DataReference {
     public boolean playerChance;
     public boolean paytogetout;
     public int chanceRoll;
+    public boolean winner;
     
     public DataReference(GameCreator game){
         this.game = game;
@@ -31,5 +32,6 @@ public class DataReference {
         this.chanceRoll = 0;
         this.jailDie = 0;
         this.paytogetout = false;
+        this.winner = false;
     }
 }

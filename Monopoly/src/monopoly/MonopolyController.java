@@ -61,14 +61,18 @@ public class MonopolyController implements ActionListener {
         this.model.nextPlayer();
         this.model.resetCounters();
         this.model.saveGame();
-        if (this.model.playerInJail()) {
-            this.view.jailPanel();
-        } else if (this.model.playerInChance()) {
-            this.view.chancePanel();
-        } else if (this.model.playerPaysRent()) {
-            this.view.gameBoard(this.model.payRent());
-        } else {
-            this.view.gameBoard(this.model.displayPlayer());
+        if (this.model.inGameCheck()){
+            this.view.winnerPanel(this.model.winnerMessage());
+        } else{
+            if (this.model.playerInJail()) {
+                this.view.jailPanel();
+            } else if (this.model.playerInChance()) {
+                this.view.chancePanel();
+            } else if (this.model.playerPaysRent()) {
+                this.view.gameBoard(this.model.payRent());
+            } else {
+                this.view.gameBoard(this.model.displayPlayer());
+            }
         }
     }
 

@@ -403,12 +403,26 @@ public class MonopolyModel extends Observable {
     public boolean balanceCheck(){
         boolean check = false;
         if (this.data.game.getPlayers()[this.data.currentPlayer].getMoney() <= 0){
-            check = true;
+            check = false;
             this.data.game.getPlayers()[this.data.currentPlayer].setInGame(false);
         } else {
-            check = false;
+            check = true;
         }
         return check;
+    }
+    
+    public boolean inGameCheck(){
+        int count = 0;
+        for (int i = 0; i < this.data.game.getPlayers().length; i++){
+            if (this.data.game.getPlayers()[i].isInGame()){
+                count++;
+            }
+        }
+        if (count > 1){
+            return false;
+        } else {
+            return true;
+        }
     }
     
     
@@ -416,6 +430,12 @@ public class MonopolyModel extends Observable {
     public String payRent(){
         String message = "you landed in someone else's property\n your account has been charged 5000\n";
         message += this.displayPlayer();
+        return message;
+    }
+    
+    public String winnerMessage(){
+        String message = this.data.game.getPlayers()[this.data.currentPlayer].getName() + " has won the game, congratulations!";
+        
         return message;
     }
 

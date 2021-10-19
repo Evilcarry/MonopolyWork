@@ -245,6 +245,18 @@ public class MonopolyView extends JFrame implements Observer {
         this.revalidate();
         this.repaint();
     }
+    
+    public void winnerPanel(String winner){
+        panelThree.removeAll();
+        
+        textArea.setText(winner);
+        
+        this.getContentPane().removeAll();
+        panelThree.setVisible(true);
+        this.add(panelThree, BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
+    }
 
     public void gameBoard(String player) {
         this.getContentPane().removeAll();
