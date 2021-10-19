@@ -12,8 +12,6 @@ import java.sql.Statement;
  * @author Sean Simpkins - 20105546
  */
 public class MonopolyDBManager {
-    //private static String userName;
-    //private static String password;
     private static final String URL = "jdbc:derby:Monopoly_GameSave; create=true";
 
     Connection conn;

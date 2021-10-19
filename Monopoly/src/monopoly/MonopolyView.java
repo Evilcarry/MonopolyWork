@@ -17,8 +17,10 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 /**
+ * Project ID: 10 - Monopoly
  *
- * @author benjh
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class MonopolyView extends JFrame implements Observer {
 
@@ -87,6 +89,9 @@ public class MonopolyView extends JFrame implements Observer {
     public JTextField fieldFour = new JTextField();
     public JTextArea textArea = new JTextArea();
 
+    /**
+     * This constructor sets up the main Jframe.
+     */
     public MonopolyView() {
         super("Monopoly");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -105,6 +110,9 @@ public class MonopolyView extends JFrame implements Observer {
         this.setVisible(true);
     }
 
+    /**
+     * This panel is responsible of allowing the user to select the amount of players.
+     */
     public void newGamePanel() {
         textDisplay = new JLabel("Choose the amount of players you want in your game");
         buttonOne.setText("2");
@@ -122,6 +130,9 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is to be displayed when a player goes to jail.
+     */
     public void jailPanel() {
         textAreaPanel.removeAll();
         buttonPanel.removeAll();
@@ -145,6 +156,9 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is to be displayed when a player lands on a chance card.
+     */
     public void chancePanel() {
         textAreaPanel.removeAll();
         buttonPanel.removeAll();
@@ -164,6 +178,9 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is displayed when a player wants to roll the die.
+     */
     public void menuRoll() {
         textAreaPanel.removeAll();
         buttonPanel.removeAll();
@@ -187,8 +204,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is for selling a property.
+     */
     public void menuSell() {
-        //TODO new layout
         panelTwo.removeAll();
 
         buttonOne.setText("Back");
@@ -207,8 +226,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is for upgrading a property.
+     */
     public void menuUpgrade() {
-        //TODO new layout.
         panelThree.removeAll();
 
         buttonOne.setText("Back");
@@ -227,8 +248,11 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is for buying a property.
+     * @param stats it needs the player details.
+     */
     public void menuBuy(String stats) {
-        //TODO new layout
         panelTwo.removeAll();
 
         buttonOne.setText("Back");
@@ -246,6 +270,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
     
+    /**
+     * This panel is to be displayed when all players run out of money.
+     * @param winner 
+     */
     public void winnerPanel(String winner){
         panelThree.removeAll();
         
@@ -258,6 +286,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This is the main panel board, sets up the board to display the monopoly board.
+     * @param player 
+     */
     public void gameBoard(String player) {
         this.getContentPane().removeAll();
         this.setLayout(new BorderLayout(8, 6));
@@ -341,6 +373,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is to be shown after the users chooses the amount of players.
+     * @param numberOfPlayers 
+     */
     public void chooseNamePanel(int numberOfPlayers) {
         textDisplay = new JLabel("Write down the names of each player");
         buttonOne.setText("Confirm");
@@ -369,6 +405,10 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * This panel is to display the instructions.
+     * @param instructions 
+     */
     public void instructionPanel(String instructions) {
         textArea = new JTextArea(instructions);
         textArea.setEditable(false);
@@ -383,11 +423,19 @@ public class MonopolyView extends JFrame implements Observer {
         this.repaint();
     }
 
+    /**
+     * Method to set the screen size.
+     * @param panel 
+     */
     private void setScreenSize(JFrame panel) {
         panel.setSize(1030, 827);
         panel.setResizable(false);
     }
 
+    /**
+     * This method helps to display the assets.
+     * @param game 
+     */
     public void displayAssets(DataReference game) {
         ArrayList<String> assetList = new ArrayList<>();
 
@@ -406,6 +454,11 @@ public class MonopolyView extends JFrame implements Observer {
 
     }
 
+    /**
+     * This is to display the roll.
+     * @param game
+     * @return 
+     */
     public String displayRoll(DataReference game) {
         String playerName = game.game.getPlayers()[game.currentPlayer].getName();
         String dieRoll = playerName + " has Rolled a " + game.die + "\n";
@@ -415,6 +468,11 @@ public class MonopolyView extends JFrame implements Observer {
         return dieRoll;
     }
 
+    /**
+     * Update message to let the user know the have purchased a property.
+     * @param game
+     * @return 
+     */
     public String successfulPurchase(DataReference game) {
         String player = game.game.getPlayers()[game.currentPlayer].getName();
         String money = Integer.toString(game.game.getPlayers()[game.currentPlayer].getMoney());
@@ -424,6 +482,11 @@ public class MonopolyView extends JFrame implements Observer {
         return message;
     }
 
+    /**
+     * this is the message to be displayed in jail, it returns the string.
+     * @param game
+     * @return 
+     */
     public String displayJail(DataReference game) {
         String message = "";
         String player = game.game.getPlayers()[game.currentPlayer].getName();
@@ -446,15 +509,29 @@ public class MonopolyView extends JFrame implements Observer {
         return message;
     }
 
+    /**
+     * This facilitates displaying messages through the controller.
+     * @param message 
+     */
     public void changeText(String message) {
         textArea.setText(message);
     }
 
+    /**
+     * this method returns a string, to be displayed if a player pays their way out of jail.
+     * @param game
+     * @return 
+     */
     public String payToGetOutMessage(DataReference game) {
         String message = "You have succesfully payed your way out of jail";
         return message;
     }
 
+    /**
+     * This method returns a string, to be displayed when a player rolls for a chance.
+     * @param game
+     * @return 
+     */
     public String chanceMessage(DataReference game) {
         String player = game.game.getPlayers()[game.currentPlayer].getName();
         String message = player + " has rolled a " + game.chanceRoll + "\n";
@@ -462,6 +539,11 @@ public class MonopolyView extends JFrame implements Observer {
         return message;
     }
 
+    /**
+     * updates panels through the observer.
+     * @param o
+     * @param arg 
+     */
     @Override
     public void update(Observable o, Object arg) {
         DataReference game = (DataReference) arg;
@@ -482,6 +564,10 @@ public class MonopolyView extends JFrame implements Observer {
         }
     }
 
+    /**
+     * Action listeners for the buttons.
+     * @param listen 
+     */
     public void addActionListener(ActionListener listen) {
         buttonOne.addActionListener(listen);
         buttonTwo.addActionListener(listen);

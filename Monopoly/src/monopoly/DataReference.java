@@ -1,8 +1,10 @@
 package monopoly;
 
 /**
+ * Project ID: 10 - Monopoly
  *
- * @author benjh
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class DataReference {
     public GameCreator game;

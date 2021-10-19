@@ -3,8 +3,10 @@ package monopoly;
 import java.util.Observable;
 
 /**
+ * Project ID: 10 - Monopoly
  *
- * @author benjh
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class MonopolyModel extends Observable {
 
@@ -20,22 +22,22 @@ public class MonopolyModel extends Observable {
         this.newGame.createPlayers(amountOfPlayers, playerNames);                    //Creating all the players with names.
         firstSave();
     }
-    
-    public void loadGame(){
+
+    public void loadGame() {
         this.newGame = new GameCreator(saveLoad.loadPlayer());
         this.newGame.createLocations();
         this.newGame.createAssets();
-        
+
         this.saveLoad.setGame(newGame);
     }
-    
-    public void firstSave(){
+
+    public void firstSave() {
         this.saveLoad.setGame(this.newGame);
         this.saveLoad.savePlayer();
         this.saveLoad.saveAssets();
     }
-    
-    public void saveGame(){
+
+    public void saveGame() {
         this.saveLoad.setGame(this.data.game);
         this.saveLoad.updatePlayer();
         this.saveLoad.updateAssets();
@@ -56,7 +58,7 @@ public class MonopolyModel extends Observable {
      */
     public void nextPlayer() {
         int players = this.data.game.getPlayers().length;
-        
+
         if (this.data.currentPlayer == (players - 1)) {
             this.data.currentPlayer = 0;
         } else {
@@ -199,6 +201,11 @@ public class MonopolyModel extends Observable {
         this.notifyObservers(data);
     }
 
+    /**
+     * To pay x player x money.
+     * @param amount
+     * @param player 
+     */
     public void payOtherPlayer(int amount, int player) {
         this.data.game.getPlayers()[player].setMoney(this.data.game.getPlayers()[player].getMoney() + amount);
         this.setChanged();
@@ -239,6 +246,10 @@ public class MonopolyModel extends Observable {
         return stats;
     }
 
+    /**
+     * method to sell a selected asset.
+     * @param assetName 
+     */
     public void sellAsset(String assetName) {
         for (int i = 0; i < this.data.game.getPlayers()[this.data.currentPlayer].getAsset().length; i++) {
             if (this.data.game.getPlayers()[this.data.currentPlayer].getAsset()[i] != null) {
@@ -253,6 +264,9 @@ public class MonopolyModel extends Observable {
         this.notifyObservers(data);
     }
 
+    /**
+     * moves a player to the closest jail to them.
+     */
     public void movePlayerToJail() {
         int currentLocation = this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getLocationID();
 
@@ -267,6 +281,9 @@ public class MonopolyModel extends Observable {
         this.notifyObservers(data);
     }
 
+    /**
+     * moves a player out of jail and sets the states back to default.
+     */
     public void movePlayerOutOfJail() {
         this.movePlayer();
         this.data.game.getPlayers()[this.data.currentPlayer].setJailState(false);
@@ -275,6 +292,10 @@ public class MonopolyModel extends Observable {
         this.notifyObservers(data);
     }
 
+    /**
+     * checks to see if a player is currently in jail.
+     * @return 
+     */
     public boolean playerInJail() {
         boolean inJail = false;
 
@@ -286,6 +307,10 @@ public class MonopolyModel extends Observable {
         return inJail;
     }
 
+    /**
+     * checks to see if a player is on a chance location.
+     * @return 
+     */
     public boolean playerInChance() {
         boolean chance = false;
 
@@ -297,6 +322,9 @@ public class MonopolyModel extends Observable {
         return chance;
     }
 
+    /**
+     * if a players pays to get out of jail this method lets the data reference know and moves the player out of jail.
+     */
     public void payToGetOutOfJail() {
         this.data.paytogetout = true;
         this.chargePlayer(10000);
@@ -305,6 +333,9 @@ public class MonopolyModel extends Observable {
         this.notifyObservers(data);
     }
 
+    /**
+     * increases the jail counter when a player rolls the die.
+     */
     public void jailCounterIncrease() {
         int jailCounter = this.data.game.getPlayers()[this.data.currentPlayer].getJailCounter();
 
@@ -315,6 +346,9 @@ public class MonopolyModel extends Observable {
         this.notifyObservers(data);
     }
 
+    /**
+     * this lets the user roll to get out of jail.
+     */
     public void rollToGetOutOfJail() {
         roll = new DiceRoll();
         int dieRoll = roll.diceRoll();
@@ -336,6 +370,9 @@ public class MonopolyModel extends Observable {
         }
     }
 
+    /**
+     * rolls a die and does the action. this is for a chance card.
+     */
     public void rollForChance() {
         DiceRoll die = new DiceRoll();
 
@@ -355,31 +392,68 @@ public class MonopolyModel extends Observable {
         }
     }
 
+    /**
+     * String to display the result of the chance roll.
+     * @return 
+     */
+    public String rollMessage() {
+        String message = "";
+        if (this.data.chanceRoll <= 2) {
+            message = "Congratulations you will be payed 5000";
+        } else if (this.data.chanceRoll > 2 && this.data.chanceRoll < 6) {
+            message = "It is not your lucky day, you will be charged 5000";
+        } else {
+            message = "You are going to jail";
+        }
+        
+        return message;
+    }
+
+    /**
+     * String to display that the player has rolled.
+     * @return 
+     */
     public String playerHasRolled() {
         String message = "You have already rolled this turn, you will not be allowed to roll again.";
 
         return message;
     }
 
+    /**
+     * String to display that the location is not purchasable.
+     * @return 
+     */
     public String notPurchaseble() {
         String message = "This location is either not purchaseble or already owned\n please try a different Menu\n";
         message += this.displayPlayer();
         return message;
     }
 
+    /**
+     * String to display that the upgrade was successful.
+     * @return 
+     */
     public String upgradeCompleted() {
         String message = "Successful upgraded the location\n";
         message += this.displayPlayer();
         return message;
     }
 
+    /**
+     * String to display that the upgrade was unsuccessful.
+     * @return 
+     */
     public String upgradeFailed() {
         String message = "The upgrade could not complete, either you don't have enough money or it is already at max level (4)\n";
         message += this.displayPlayer();
         return message;
     }
-    
-    
+
+    /**
+     * Method to check if a player landed on a owned property.
+     * chargers the player and pays the other player.
+     * @return 
+     */
     public boolean playerPaysRent() {
         boolean pays = false;
         int currentLocationID = this.data.game.getPlayers()[this.data.currentPlayer].getCurrentLocation().getLocationID();
@@ -399,10 +473,14 @@ public class MonopolyModel extends Observable {
         }
         return pays;
     }
-    
-    public boolean balanceCheck(){
+
+    /**
+     * checks the balance of the current player, if their balance is negative, it skips their turn.
+     * @return 
+     */
+    public boolean balanceCheck() {
         boolean check = false;
-        if (this.data.game.getPlayers()[this.data.currentPlayer].getMoney() <= 0){
+        if (this.data.game.getPlayers()[this.data.currentPlayer].getMoney() <= 0) {
             check = false;
             this.data.game.getPlayers()[this.data.currentPlayer].setInGame(false);
         } else {
@@ -410,32 +488,47 @@ public class MonopolyModel extends Observable {
         }
         return check;
     }
-    
-    public boolean inGameCheck(){
+
+    /**
+     * checks to see how many players are in game, returns true if only one player is in game.
+     * @return 
+     */
+    public boolean inGameCheck() {
         int count = 0;
-        for (int i = 0; i < this.data.game.getPlayers().length; i++){
-            if (this.data.game.getPlayers()[i].isInGame()){
+        for (int i = 0; i < this.data.game.getPlayers().length; i++) {
+            if (this.data.game.getPlayers()[i].isInGame()) {
                 count++;
             }
         }
-        if (count > 1){
+        if (count > 1) {
             return false;
         } else {
             return true;
         }
     }
-    
-    
-    
-    public String payRent(){
+
+    /**
+     * When a player lands on a owned property this method returns a string.
+     * @return 
+     */
+    public String payRent() {
         String message = "you landed in someone else's property\n your account has been charged 5000\n";
         message += this.displayPlayer();
         return message;
     }
-    
-    public String winnerMessage(){
-        String message = this.data.game.getPlayers()[this.data.currentPlayer].getName() + " has won the game, congratulations!";
-        
+
+    /**
+     * This returns a string with the winner of the game.
+     * @return 
+     */
+    public String winnerMessage() {
+        String message = "";
+
+        for (int i = 0; i < this.data.game.getPlayers().length; i++) {
+            if (this.data.game.getPlayers()[i].isInGame()) {
+                message = this.data.game.getPlayers()[this.data.currentPlayer].getName() + " has won the game, congratulations!";
+            }
+        }
         return message;
     }
 
@@ -459,6 +552,10 @@ public class MonopolyModel extends Observable {
         return instructions;
     }
 
+    /**
+     * This returns a string to display the player details.
+     * @return 
+     */
     public String displayPlayer() {
         String currentPlayer = this.data.game.getPlayers()[this.data.currentPlayer].getName() + "'s turn \n";
         currentPlayer += "Cash $" + this.data.game.getPlayers()[this.data.currentPlayer].getMoney() + "\n";

@@ -6,8 +6,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Project ID: 10 - Monopoly
  *
- * @author benjh
+ * @author Benjamin Andres Fuentes Cavieres - 20104709
+ * @author Sean Simpkins - 20105546
  */
 public class MonopolyController implements ActionListener {
 
@@ -15,6 +17,11 @@ public class MonopolyController implements ActionListener {
     MonopolyModel model;
     private int amountOfPlayers = 2;
 
+    /**
+     * This is a constructor to initialize things.
+     * @param view
+     * @param model 
+     */
     public MonopolyController(MonopolyView view, MonopolyModel model) {
         this.view = view;
         this.model = model;
@@ -22,13 +29,11 @@ public class MonopolyController implements ActionListener {
     }
 
     /**
-     *
+     *  returns the name of the players to the model.
      * @param amountOfPlayers
      * @return
      */
     public void setPlayName(int amountOfPlayers) {
-        //TODO: validate player names.
-        //We can call this.view.ChooseNamePanel again if the name is wrong.
         String[] playersName = new String[amountOfPlayers];
 
         playersName[0] = this.view.fieldOne.getText();
@@ -44,11 +49,18 @@ public class MonopolyController implements ActionListener {
         this.model.gameStart(amountOfPlayers, playersName);
     }
 
+    /**
+     * This gets the name of the selected asset and returns it to the model.
+     * @return 
+     */
     public String getAssetName() {
         String assetName = this.view.assetSelect.getSelectedItem().toString();
         return assetName;
     }
 
+    /**
+     * this is to display the text after a player rolls the die.
+     */
     public void rollAction() {
         if (this.model.data.hasRolled) {
             this.view.changeText(this.model.playerHasRolled());
@@ -57,6 +69,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * when a player uses the next player button, the controller checks this methods.
+     */
     public void nextPlayerAction() {
         this.model.nextPlayer();
         this.model.resetCounters();
@@ -76,6 +91,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * This calls for a buy menu panel.
+     */
     public void buyMenu() {
         if (this.model.purchasable()) {
             this.view.menuBuy(this.model.buyMessage());
@@ -84,6 +102,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * this makes sure the user only rolls one time when they are in jail.
+     */
     public void rollForFreedom() {
         if (this.model.data.hasRolled) {
             this.view.changeText(this.model.playerHasRolled());
@@ -92,6 +113,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * if a player pays their way out of jail.
+     */
     public void payYourWayOut() {
         if (this.model.data.hasRolled) {
             this.view.changeText(this.model.playerHasRolled());
@@ -100,6 +124,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * this is to display wether an asset was purchased or not.
+     */
     public void upgrade() {
         if (this.model.upgradeAssetConfirm(this.getAssetName())) {
             this.view.changeText(this.model.upgradeCompleted());
@@ -108,6 +135,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * this method checks to see if the asset is purchasable.
+     */
     public void buy() {
         if (this.model.purchasable()) {
             this.model.buyAsset();
@@ -116,6 +146,9 @@ public class MonopolyController implements ActionListener {
         }
     }
 
+    /**
+     * when a player rolls for chance, this method calls the panels and the model.
+     */
     public void rollForChance() {
         if (this.model.data.hasRolled) {
             this.view.changeText(this.model.playerHasRolled());
@@ -124,50 +157,46 @@ public class MonopolyController implements ActionListener {
             this.view.gameBoard(this.model.displayPlayer());
         } else {
             this.model.rollForChance();
-            //TODO: message after rolling
+            this.view.changeText(this.model.rollMessage());
         }
     }
 
+    /**
+     * Actions for the buttons.
+     * @param e 
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String userClick = e.getActionCommand();
 
         switch (userClick) {
             case "New Game":
-                System.out.println("New Game button pressed");
                 this.view.newGamePanel();
                 break;
             case "Load Game":
-                System.out.println("Load Game button pressed");
                 this.model.loadGame();
                 this.model.dataReference();
                 this.view.gameBoard(this.model.displayPlayer());
                 break;
             case "2":
-                System.out.println("2 Players button pressed");
                 this.view.chooseNamePanel(amountOfPlayers);
                 break;
             case "3":
-                System.out.println("3 Players button pressed");
                 this.amountOfPlayers = 3;
                 this.view.chooseNamePanel(amountOfPlayers);
                 break;
             case "4":
-                System.out.println("4 Players button pressed");
                 this.amountOfPlayers = 4;
                 this.view.chooseNamePanel(4);
                 break;
             case "Confirm":
-                System.out.println("Confirm button pressed");
                 this.view.instructionPanel(this.model.instructions());
                 this.setPlayName(amountOfPlayers);
                 break;
             case "Roll menu":
-                System.out.println("Die roll button pressed");
                 this.view.menuRoll();
                 break;
             case "Roll":
-                System.out.println("Roll button pressed");
                 this.rollAction();
                 break;
             case "Next Player":
@@ -177,45 +206,35 @@ public class MonopolyController implements ActionListener {
                 this.rollForChance();
                 break;
             case "Sell Menu":
-                System.out.println("sell menu button pressed");
                 this.view.menuSell();
                 this.model.sellAssetMenu();
                 break;
             case "Sell":
-                System.out.println("sell button pressed");
                 this.model.sellAsset(this.getAssetName());
                 break;
             case "Buy Menu":
-                System.out.println("buy menu button pressed");
                 this.buyMenu();
                 break;
             case "Buy":
-                System.out.println("Buy button pressed");
                 this.buy();
                 break;
             case "Upgrade Menu":
-                System.out.println("upgrade menu button pressed");
                 this.model.upgradeAssetMenu();
                 this.view.menuUpgrade();
                 break;
             case "Upgrade":
-                System.out.println("Upgrade button pressed");
                 this.upgrade();
             case "Back":
-                System.out.println("Back button pressed");
                 this.view.gameBoard(this.model.displayPlayer());
                 break;
             case "I've read the instructions":
-                System.out.println("Instructions read button");
                 this.model.dataReference();
                 this.view.gameBoard(this.model.displayPlayer());
                 break;
             case "Roll for freedom":
-                System.out.println("roll for freedom button pressed");
                 this.rollForFreedom();
                 break;
             case "Pay your way out":
-                System.out.println("Pay your way out button pressed");
                 this.payYourWayOut();
                 break;
         }
